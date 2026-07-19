@@ -197,11 +197,130 @@ class AAT_OT_delete_bone_pattern(Operator):
         return {'FINISHED'}
 
 
+_END_BONE_PATTERN = re.compile(r"(?i)(?:[._ ]end)+(?:\.\d+)?$")
+
+
+class AAT_OT_attach_mesh_auto_weights(Operator):
+    bl_idname = "aat.attach_mesh_auto_weights"
+    bl_label = "Attach Mesh (Auto Weights)"
+    bl_description = (
+        "Parent the selected meshes to the model's armature and generate "
+        "automatic bone-heat weights for them"
+    )
+    bl_options = {'REGISTER', 'UNDO'}
+
+    clear_existing: bpy.props.BoolProperty(
+        name="Clear Existing Weights",
+        description="Remove all vertex groups from the meshes before generating new weights",
+        default=False,
+    )
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return (
+            common.get_armature(context) is not None
+            and any(obj.type == 'MESH' for obj in context.selected_objects)
+        )
+
+    def execute(self, context: Context):
+        armature = common.get_armature(context)
+        meshes = [obj for obj in context.selected_objects if obj.type == 'MESH']
+        if not meshes:
+            self.report({'ERROR'}, "Select the meshes to attach")
+            return {'CANCELLED'}
+
+        common.ensure_object_mode(context)
+        if self.clear_existing:
+            for mesh in meshes:
+                mesh.vertex_groups.clear()
+
+        for obj in context.view_layer.objects:
+            obj.select_set(False)
+        for mesh in meshes:
+            mesh.hide_set(False)
+            mesh.select_set(True)
+        armature.hide_set(False)
+        armature.select_set(True)
+        context.view_layer.objects.active = armature
+
+        try:
+            bpy.ops.object.parent_set(type='ARMATURE_AUTO')
+        except RuntimeError as exc:
+            self.report({'ERROR'}, f"Automatic weights failed: {exc}")
+            return {'CANCELLED'}
+
+        weighted = 0
+        for mesh in meshes:
+            if common.collect_weighted_bone_names([mesh]):
+                weighted += 1
+        if weighted < len(meshes):
+            self.report(
+                {'WARNING'},
+                f"Attached {len(meshes)} meshes, but {len(meshes) - weighted} got no "
+                "weights (bone heat could not find a solution there)",
+            )
+        else:
+            self.report({'INFO'}, f"Attached {len(meshes)} meshes with automatic weights")
+        return {'FINISHED'}
+
+
+class AAT_OT_remove_end_bones(Operator):
+    bl_idname = "aat.remove_end_bones"
+    bl_label = "Remove End Bones"
+    bl_description = (
+        "Delete every leftover end bone (names ending in _end, _end_end, "
+        "_End.001 and similar), merging any weights into their parents"
+    )
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return common.get_armature(context) is not None
+
+    def execute(self, context: Context):
+        armature = common.get_armature(context)
+        meshes = common.get_armature_meshes(context, armature)
+
+        common.switch_mode(context, armature, 'EDIT')
+        edit_bones = armature.data.edit_bones
+        matched = {b.name for b in edit_bones if _END_BONE_PATTERN.search(b.name)}
+        if not matched:
+            bpy.ops.object.mode_set(mode='OBJECT')
+            self.report({'INFO'}, "No end bones found")
+            return {'CANCELLED'}
+
+        merge_targets: dict[str, str] = {}
+        for name in matched:
+            bone = edit_bones.get(name)
+            ancestor = bone.parent
+            while ancestor is not None and ancestor.name in matched:
+                ancestor = ancestor.parent
+            if ancestor is not None:
+                merge_targets[name] = ancestor.name
+
+        for name in matched:
+            bone = edit_bones.get(name)
+            if bone is not None:
+                for child in bone.children:
+                    child.parent = bone.parent
+                edit_bones.remove(bone)
+
+        bpy.ops.object.mode_set(mode='OBJECT')
+        for mesh in meshes:
+            for source, target in merge_targets.items():
+                common.merge_vertex_group(mesh, source, target)
+
+        self.report({'INFO'}, f"Removed {len(matched)} end bones")
+        return {'FINISHED'}
+
+
 _CLASSES = (
     AAT_OT_merge_weights_to_parent,
     AAT_OT_remove_zero_weight_bones,
     AAT_OT_remove_constraints,
     AAT_OT_delete_bone_pattern,
+    AAT_OT_attach_mesh_auto_weights,
+    AAT_OT_remove_end_bones,
 )
 
 

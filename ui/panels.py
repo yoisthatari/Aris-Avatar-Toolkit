@@ -95,8 +95,11 @@ class AAT_PT_armature_tools(_BasePanel, Panel):
         layout = self.layout
         settings = context.scene.aat
         col = layout.column(align=True)
+        col.operator("aat.attach_mesh_auto_weights", icon='OUTLINER_OB_ARMATURE')
+        col.separator()
         col.operator("aat.merge_weights_to_parent", icon='BONE_DATA')
         col.operator("aat.remove_zero_weight_bones", icon='GROUP_BONE')
+        col.operator("aat.remove_end_bones", icon='TRASH')
         col.operator("aat.delete_bone_pattern", icon='VIEWZOOM')
         col.operator("aat.remove_constraints", icon='CONSTRAINT_BONE')
         layout.prop(settings, "merge_weights_threshold")
