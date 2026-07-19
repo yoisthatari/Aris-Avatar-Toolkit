@@ -1,0 +1,29 @@
+schema_version = "1.0.0"
+
+id = "ari_avatar_toolkit"
+version = "1.0.0"
+name = "Ari's Avatar Toolkit"
+tagline = "Modern avatar optimization and rig fixing for Blender 5"
+maintainer = "Ari (yoisthatari)"
+type = "add-on"
+
+website = "https://github.com/yoisthatari/Ari-s-Avatar-Toolkit"
+
+tags = ["Rigging", "Mesh"]
+
+blender_version_min = "5.2.0"
+
+license = [
+  "SPDX:LicenseRef-AAT-Source-Available-1.0",
+]
+copyright = [
+  "2026 Ari (yoisthatari)",
+]
+
+[build]
+paths_exclude_pattern = [
+  "__pycache__/",
+  ".*",
+  "*.zip",
+  "/docs/",
+]

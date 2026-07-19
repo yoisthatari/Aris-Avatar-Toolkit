@@ -1,0 +1,221 @@
+import bpy
+from bpy.props import (
+    BoolProperty,
+    EnumProperty,
+    FloatProperty,
+    IntProperty,
+    PointerProperty,
+)
+from bpy.types import PropertyGroup
+
+from . import common
+
+_enum_cache: dict[str, list[tuple[str, str, str]]] = {}
+
+
+def _poll_armature(self, obj) -> bool:
+    return obj.type == 'ARMATURE'
+
+
+def _mesh_items(self, context):
+    armature = common.get_armature(context)
+    items: list[tuple[str, str, str]] = []
+    if armature:
+        for mesh in common.get_armature_meshes(context, armature):
+            items.append((mesh.name, mesh.name, "Mesh object"))
+    if not items:
+        items = [("NONE", "No meshes found", "No meshes are bound to the armature")]
+    _enum_cache["meshes"] = items
+    return items
+
+
+def _shapekey_items_for(mesh_prop: str, cache_key: str):
+    def items_fn(self, context):
+        settings = context.scene.aat
+        mesh_name = getattr(settings, mesh_prop, "NONE")
+        mesh = bpy.data.objects.get(mesh_name)
+        items: list[tuple[str, str, str]] = [("NONE", "None", "No shape key selected")]
+        if mesh and mesh.type == 'MESH' and mesh.data.shape_keys:
+            for kb in mesh.data.shape_keys.key_blocks[1:]:
+                items.append((kb.name, kb.name, "Shape key"))
+        _enum_cache[cache_key] = items
+        return items
+    return items_fn
+
+
+def _bone_items(context, cache_key: str):
+    armature = common.get_armature(context)
+    items: list[tuple[str, str, str]] = [("NONE", "None", "No bone selected")]
+    if armature:
+        preferred = []
+        others = []
+        for bone in armature.data.bones:
+            lowered = bone.name.lower()
+            if "eye" in lowered or "目" in bone.name:
+                preferred.append((bone.name, bone.name, "Bone"))
+            else:
+                others.append((bone.name, bone.name, "Bone"))
+        items.extend(preferred)
+        items.extend(others)
+    _enum_cache[cache_key] = items
+    return items
+
+
+def _left_eye_items(self, context):
+    return _bone_items(context, "eye_left")
+
+
+def _right_eye_items(self, context):
+    return _bone_items(context, "eye_right")
+
+
+class AATSettings(PropertyGroup):
+    armature: PointerProperty(
+        name="Armature",
+        description="Armature the toolkit operates on",
+        type=bpy.types.Object,
+        poll=_poll_armature,
+    )
+
+    fix_standardize_names: BoolProperty(
+        name="Standardize Bone Names",
+        description="Rename bones from MMD/Mixamo/Source/VRoid conventions to the standard scheme (Hips, Spine, Left arm, ...)",
+        default=True,
+    )
+    fix_translate_names: BoolProperty(
+        name="Translate Japanese Names",
+        description="Translate Japanese bone, shape key, material and object names to English (fully offline)",
+        default=True,
+    )
+    fix_reparent_bones: BoolProperty(
+        name="Fix Bone Hierarchy",
+        description="Rebuild the Hips-Spine-Chest-Neck-Head chain and fix the hips orientation",
+        default=True,
+    )
+    fix_remove_zero_weight: BoolProperty(
+        name="Remove Zero-Weight Bones",
+        description="Delete bones without any vertex weights and merge their children's weights upward",
+        default=True,
+    )
+    fix_keep_twist_bones: BoolProperty(
+        name="Keep Twist Bones",
+        description="Do not delete twist bones even when they carry no weights",
+        default=False,
+    )
+    fix_connect_bones: BoolProperty(
+        name="Connect Bones",
+        description="Snap parent bone tails to their single child's head for a cleaner armature",
+        default=True,
+    )
+    fix_join_meshes: BoolProperty(
+        name="Join Meshes",
+        description="Join all meshes bound to the armature into a single 'Body' mesh",
+        default=True,
+    )
+    fix_remove_constraints: BoolProperty(
+        name="Remove Constraints",
+        description="Remove all bone constraints (IK setups from MMD models etc.)",
+        default=True,
+    )
+    fix_remove_rigidbodies: BoolProperty(
+        name="Remove Rigid Bodies & Joints",
+        description="Delete MMD rigid body and joint helper objects",
+        default=True,
+    )
+
+    viseme_mesh: EnumProperty(
+        name="Mesh",
+        description="Mesh that holds the mouth shape keys",
+        items=_mesh_items,
+    )
+    viseme_ah: EnumProperty(
+        name="Shape A",
+        description="Shape key for the open 'aa' mouth (e.g. 'Ah')",
+        items=_shapekey_items_for("viseme_mesh", "viseme_ah"),
+    )
+    viseme_oh: EnumProperty(
+        name="Shape O",
+        description="Shape key for the rounded 'oh' mouth (e.g. 'Oh')",
+        items=_shapekey_items_for("viseme_mesh", "viseme_oh"),
+    )
+    viseme_ch: EnumProperty(
+        name="Shape CH",
+        description="Shape key for the wide 'ch' mouth (e.g. 'Ch' or 'I')",
+        items=_shapekey_items_for("viseme_mesh", "viseme_ch"),
+    )
+    viseme_intensity: FloatProperty(
+        name="Shape Intensity",
+        description="Strength multiplier applied to the generated visemes",
+        default=1.0,
+        min=0.1,
+        max=2.0,
+        subtype='FACTOR',
+    )
+
+    eye_left_bone: EnumProperty(
+        name="Left Eye",
+        description="Bone that drives the left eye",
+        items=_left_eye_items,
+    )
+    eye_right_bone: EnumProperty(
+        name="Right Eye",
+        description="Bone that drives the right eye",
+        items=_right_eye_items,
+    )
+    eye_reparent_to_head: BoolProperty(
+        name="Parent to Head",
+        description="Reparent the eye bones directly to the Head bone",
+        default=True,
+    )
+    eye_straighten: BoolProperty(
+        name="Straighten Eye Bones",
+        description="Point the eye bones straight up, which most game engines expect",
+        default=True,
+    )
+
+    decimate_mode: EnumProperty(
+        name="Mode",
+        description="How meshes with shape keys are handled during decimation",
+        items=(
+            ('SAFE', "Safe", "Only decimate meshes without shape keys"),
+            ('SELECTED', "Selected", "Only decimate the currently selected meshes (shape keys on them are lost)"),
+            ('FULL', "Full", "Decimate everything; shape keys are removed from decimated meshes"),
+        ),
+        default='SAFE',
+    )
+    decimate_max_tris: IntProperty(
+        name="Max Triangles",
+        description="Target triangle count for the whole model",
+        default=70000,
+        min=1000,
+        max=500000,
+    )
+    decimate_remove_doubles: BoolProperty(
+        name="Remove Doubles First",
+        description="Merge duplicate vertices before decimating (skips meshes with shape keys)",
+        default=False,
+    )
+
+    merge_weights_threshold: FloatProperty(
+        name="Weight Threshold",
+        description="Weights at or below this value count as zero",
+        default=0.0001,
+        min=0.0,
+        max=0.1,
+        precision=4,
+    )
+
+
+_CLASSES = (AATSettings,)
+
+
+def register() -> None:
+    for cls in _CLASSES:
+        bpy.utils.register_class(cls)
+    bpy.types.Scene.aat = PointerProperty(type=AATSettings)
+
+
+def unregister() -> None:
+    del bpy.types.Scene.aat
+    for cls in reversed(_CLASSES):
+        bpy.utils.unregister_class(cls)
