@@ -9,6 +9,9 @@
   extensions.blender.org through Blender's extension system
 - Export Model: FBX export with avatar-safe settings (shape keys kept,
   no leaf bones, embedded textures, triangle count warning)
+- Blendshape transfer: moves shape keys between meshes with different
+  topology, with subdivision and displace pre-processing (preview
+  toggles included) and a paintable red/blue transfer mask
 - Elastic Clothing Fit: pushes clothing out of the body with an elastic
   falloff. UV and topology safe, shape keys carried along. Per-region
   offset groups and pin groups supported

@@ -213,6 +213,55 @@ class AAT_PT_decimation(_BasePanel, Panel):
         col.operator("aat.decimate", icon='MOD_DECIM')
 
 
+class AAT_PT_blendshape(_BasePanel, Panel):
+    bl_idname = "AAT_PT_blendshape"
+    bl_label = "Blendshape"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context: Context) -> None:
+        layout = self.layout
+        settings = context.scene.aat
+        layout.prop(settings, "bst_source")
+        layout.prop(settings, "bst_target")
+
+        box = layout.box()
+        box.label(text="Pre-Processing Modifiers", icon='MODIFIER')
+        row = box.row(align=True)
+        row.prop(settings, "bst_use_subsurf")
+        if settings.bst_use_subsurf:
+            sub = box.row(align=True)
+            sub.prop(settings, "bst_subsurf_levels")
+            sub.prop(settings, "bst_preview_subsurf", toggle=True, icon='HIDE_OFF')
+        row = box.row(align=True)
+        row.prop(settings, "bst_use_displace")
+        if settings.bst_use_displace:
+            sub = box.row(align=True)
+            sub.prop(settings, "bst_displace_strength")
+            sub.prop(settings, "bst_preview_displace", toggle=True, icon='HIDE_OFF')
+
+        box = layout.box()
+        box.label(text="Transfer Mask", icon='BRUSH_DATA')
+        box.label(text="Red transfers fully, blue not at all")
+        painting = (
+            context.mode == 'PAINT_WEIGHT'
+            and settings.bst_target is not None
+            and context.active_object is settings.bst_target
+        )
+        box.operator(
+            "aat.draw_transfer_mask",
+            text="Finish Painting" if painting else "Draw Transfer Mask",
+            icon='CHECKMARK' if painting else 'BRUSH_DATA',
+            depress=painting,
+        )
+        row = box.row(align=True)
+        row.operator("aat.reset_transfer_mask")
+        row.operator("aat.invert_transfer_mask")
+
+        col = layout.column()
+        col.scale_y = 1.4
+        col.operator("aat.transfer_blendshapes", icon='SHAPEKEY_DATA')
+
+
 class AAT_PT_shapekeys(_BasePanel, Panel):
     bl_idname = "AAT_PT_shapekeys"
     bl_label = "Shape Keys"
@@ -267,6 +316,7 @@ _CLASSES = (
     AAT_PT_visemes,
     AAT_PT_eye_tracking,
     AAT_PT_clothing,
+    AAT_PT_blendshape,
     AAT_PT_decimation,
     AAT_PT_shapekeys,
     AAT_PT_mesh_materials,

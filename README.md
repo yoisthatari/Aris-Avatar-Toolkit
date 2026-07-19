@@ -40,6 +40,12 @@ Source available: you can read the code and use the add-on freely, including for
 - Elastic Fit: pushes clothing meshes out of the body with an elastic falloff. UV and topology safe, and shape keys are carried along. Supports a per-region offset group for areas that need extra clearance and a pin group for vertices that must never move.
 - Robust Weight Transfer: transfers bone weights from the body to clothing using confident surface matching plus diffusion inpainting for uncertain areas such as armpits, chest, and between the legs. No manual weight smoothing needed. Original implementation of the SIGGRAPH Asia 2023 paper "Robust Skin Weights Transfer via Weight Inpainting" (Abdrashitov et al.).
 
+### Blendshape transfer
+
+- Transfers every shape key from a source mesh to a target mesh, even across completely different topology. Pick the Source and Target in the Blendshape panel and click Transfer Blendshapes.
+- Pre-processing modifiers improve transfer quality: Subdivision Surface smooths the source so the transfer has more data to work with (1 to 2 levels is usually enough; higher levels get expensive on dense meshes), and Displace moves the source geometry along its normals to bring it closer to the target. Both have a preview toggle that shows their effect on the source mesh in the viewport.
+- Paintable transfer mask: red areas transfer fully, blue areas not at all. Click Draw Transfer Mask to paint, click again to finish, with Reset and Invert buttons for quick changes.
+
 ### Visemes
 
 - Generates the 15 standard vrc.v_* visemes from your A, O, and CH mouth shapes, with adjustable intensity.

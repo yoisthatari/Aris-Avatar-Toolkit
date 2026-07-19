@@ -2,6 +2,7 @@ from . import core
 from .core import properties
 from .operators import (
     armature_ops,
+    blendshape_transfer,
     clothing_fit,
     decimation,
     eye_tracking,
@@ -27,6 +28,7 @@ _MODULES = (
     eye_tracking,
     clothing_fit,
     weight_transfer,
+    blendshape_transfer,
     shapekey_ops,
     mesh_ops,
     material_ops,

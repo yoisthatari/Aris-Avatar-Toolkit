@@ -18,6 +18,16 @@ def _poll_armature(self, obj) -> bool:
     return obj.type == 'ARMATURE'
 
 
+def _poll_mesh(self, obj) -> bool:
+    return obj.type == 'MESH'
+
+
+def _sync_bst_preview(self, context):
+    from ..operators import blendshape_transfer
+
+    blendshape_transfer.sync_preview_modifiers(self)
+
+
 def _mesh_items(self, context):
     armature = common.get_armature(context)
     items: list[tuple[str, str, str]] = []
@@ -268,6 +278,61 @@ class AATSettings(PropertyGroup):
         name="Remove Doubles First",
         description="Merge duplicate vertices before decimating (skips meshes with shape keys)",
         default=False,
+    )
+
+    bst_source: PointerProperty(
+        name="Source",
+        description="Mesh with the blendshapes you want to transfer",
+        type=bpy.types.Object,
+        poll=_poll_mesh,
+    )
+    bst_target: PointerProperty(
+        name="Target",
+        description="Mesh that will receive the blendshapes",
+        type=bpy.types.Object,
+        poll=_poll_mesh,
+    )
+    bst_use_subsurf: BoolProperty(
+        name="Subdivision Surface",
+        description="Smooth the source mesh so the transfer has more data to work with. Expensive on dense meshes; 1-2 levels is usually enough",
+        default=False,
+        update=_sync_bst_preview,
+    )
+    bst_subsurf_levels: IntProperty(
+        name="Levels",
+        description="Subdivision levels applied to the source during transfer",
+        default=1,
+        min=1,
+        max=4,
+        update=_sync_bst_preview,
+    )
+    bst_preview_subsurf: BoolProperty(
+        name="Preview",
+        description="Show the subdivision on the source mesh in the viewport",
+        default=False,
+        update=_sync_bst_preview,
+    )
+    bst_use_displace: BoolProperty(
+        name="Displace",
+        description="Displace the source geometry along its normals to bring it closer to the target",
+        default=False,
+        update=_sync_bst_preview,
+    )
+    bst_displace_strength: FloatProperty(
+        name="Strength",
+        description="Displacement distance; negative values pull the surface inward",
+        default=0.01,
+        min=-1.0,
+        max=1.0,
+        precision=4,
+        subtype='DISTANCE',
+        update=_sync_bst_preview,
+    )
+    bst_preview_displace: BoolProperty(
+        name="Preview",
+        description="Show the displacement on the source mesh in the viewport",
+        default=False,
+        update=_sync_bst_preview,
     )
 
     merge_weights_threshold: FloatProperty(
