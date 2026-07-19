@@ -8,6 +8,12 @@ Source available: you can read the code and use the add-on freely, including for
 
 ## Features
 
+### Import and export
+
+- Import Model: one button for every supported format. PMX and PMD import through the official MMD Tools extension, VRM through the VRM add-on, and FBX, glTF, OBJ, STL, and Collada through Blender's built-in importers. The imported armature is selected automatically.
+- Install MMD Tools: one click installs the official MMD Tools extension straight from extensions.blender.org through Blender's extension system (no bundled forks, always up to date).
+- Export Model: FBX export with avatar-safe settings. Shape keys preserved, no leaf bones, textures embedded, Unity-friendly scale, and a warning when you are over 70k triangles.
+
 ### Fix Model in one click
 
 - Translates Japanese bone, shape key, material, and object names. Fully offline, using a curated dictionary with kana romanization fallback. No Google Translate, no telemetry.
@@ -65,7 +71,7 @@ Source available: you can read the code and use the add-on freely, including for
 | Blender support | 2.79 to 3.6 (abandoned) | 5.2 LTS |
 | Packaging | Legacy add-on (bl_info) | Blender Extension (blender_manifest.toml) |
 | Translation | Google Translate (online) | Offline dictionary, private and deterministic |
-| Importers | Bundled forks of mmd_tools and others | Uses official importers, no stale bundled code |
+| Importers | Bundled forks of mmd_tools and others | One-click import through official importers, auto-installs MMD Tools |
 | Eye tracking | Legacy shape-key based | Modern bone-based |
 | Clothing tools | None | Elastic fit and robust weight transfer |
 | Codebase | Ten years of accumulated patches | Clean, modular Python |
@@ -78,12 +84,12 @@ Source available: you can read the code and use the add-on freely, including for
 
 ## Quick start
 
-1. Import your model. Use the official mmd_tools extension for PMX, the VRM add-on for VRM, or the built-in FBX importer.
-2. Pick the armature at the top of the panel (auto-detected if there is only one) and click Fix Model.
+1. Click Import Model and pick your file. For PMX models, click Install MMD Tools first if you have not already.
+2. Click Fix Model. The armature is picked automatically if there is only one.
 3. Set up Visemes and Eye Tracking.
 4. Fit clothing and transfer weights from the Clothing and Weights panel if you are assembling an outfit.
 5. Decimate if you are over your target platform's polygon budget.
-6. Export FBX and bring it into Unity.
+6. Click Export Model and bring the FBX into Unity.
 
 ## Building from source
 

@@ -4,6 +4,7 @@ import bpy
 from bpy.types import Context, Panel
 
 from ..core import common
+from ..operators import import_export
 
 CATEGORY = "Ari's Toolkit"
 
@@ -22,6 +23,14 @@ class AAT_PT_main(_BasePanel, Panel):
         layout = self.layout
         settings = context.scene.aat
 
+        row = layout.row(align=True)
+        row.scale_y = 1.2
+        row.operator("aat.import_model", icon='IMPORT')
+        row.operator("aat.export_model", icon='EXPORT')
+        if not import_export.mmd_tools_available():
+            layout.operator("aat.install_mmd_tools", icon='PLUGIN')
+
+        layout.separator()
         layout.prop(settings, "armature")
 
         armature = common.get_armature(context)

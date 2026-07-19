@@ -6,6 +6,7 @@ from .operators import (
     decimation,
     eye_tracking,
     fix_model,
+    import_export,
     material_ops,
     mesh_ops,
     pose_ops,
@@ -18,6 +19,7 @@ from .ui import panels
 
 _MODULES = (
     properties,
+    import_export,
     fix_model,
     armature_ops,
     pose_ops,

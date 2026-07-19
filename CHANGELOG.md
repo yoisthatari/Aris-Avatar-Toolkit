@@ -2,6 +2,13 @@
 
 ## 1.1.0 (2026-07-19)
 
+- Import Model: one-click import for PMX/PMD (through the official MMD
+  Tools extension), VRM, FBX, glTF, OBJ, STL and Collada, with automatic
+  armature selection
+- Install MMD Tools: installs the official extension from
+  extensions.blender.org through Blender's extension system
+- Export Model: FBX export with avatar-safe settings (shape keys kept,
+  no leaf bones, embedded textures, triangle count warning)
 - Elastic Clothing Fit: pushes clothing out of the body with an elastic
   falloff. UV and topology safe, shape keys carried along. Per-region
   offset groups and pin groups supported
