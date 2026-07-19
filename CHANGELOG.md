@@ -25,6 +25,24 @@
   bone-heat weights
 - Remove End Bones: one-click cleanup of leftover _end bones
 - New Clothing and Weights panel
+- Vertex/Face Alignment: aligns the selected objects to a vertex or face
+  center picked on the active object in edit mode, with a new Align Tools
+  panel
+- Avatar Analyzer: scores an avatar against VRChat's PC and Quest
+  performance rank thresholds, with heavy-mesh and texture-hotspot
+  reports, a JSON export, and creator tools (Texture Optimizer, Mesh
+  Heatmap, Auto Fix Avatar with undo, Restore Texture Size Backup,
+  scene-wide Batch Report)
+- Blendshape Sync: keeps a shape key active by name across the active
+  object, an Auxiliary object, and every selected mesh, with a Quick
+  Sculpt Mode shortcut and an instant reset
+- Shapekey Batch Creator: paste a comma-separated list of names to
+  generate empty shape keys across every selected mesh, with a
+  paginated, clickable shape key list
+- Vertex Error Selector: paste vertex index numbers from a Unity
+  unweighted-vertex error to select exactly those vertices in Edit Mode
+- Rigging tools: Store, Restore, and Reset Pose, for weight painting and
+  clipping fixes without losing your place
 
 ## 1.0.0 (2026-07-19)
 

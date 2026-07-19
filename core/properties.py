@@ -80,6 +80,28 @@ def _right_eye_items(self, context):
     return _bone_items(context, "eye_right")
 
 
+def _active_shapekey_items(self, context):
+    obj = context.active_object
+    items: list[tuple[str, str, str]] = [("NONE", "None", "No shape key selected")]
+    if obj is not None and common.has_shapekeys(obj):
+        for kb in obj.data.shape_keys.key_blocks[1:]:
+            items.append((kb.name, kb.name, "Shape key"))
+    _enum_cache["sync_shapekey"] = items
+    return items
+
+
+def _armature_items(self, context):
+    items: list[tuple[str, str, str]] = [
+        (obj.name, obj.name, "Armature")
+        for obj in context.scene.objects
+        if obj.type == 'ARMATURE'
+    ]
+    if not items:
+        items = [("NONE", "No armatures found", "No armature objects in the scene")]
+    _enum_cache["analyzer_armature"] = items
+    return items
+
+
 class AATSettings(PropertyGroup):
     armature: PointerProperty(
         name="Armature",
@@ -342,6 +364,77 @@ class AATSettings(PropertyGroup):
         min=0.0,
         max=0.1,
         precision=4,
+    )
+
+    analyzer_armature: EnumProperty(
+        name="Scope",
+        description="Armature to analyze",
+        items=_armature_items,
+    )
+    analyzer_platform: EnumProperty(
+        name="Target",
+        description="Platform to compare the avatar against",
+        items=(
+            ('PC', "PC", "VRChat PC performance rank thresholds"),
+            ('QUEST', "Quest", "VRChat Quest performance rank thresholds"),
+        ),
+        default='PC',
+    )
+    analyzer_max_texture: EnumProperty(
+        name="Max Texture",
+        description="Target texture size for Texture Optimizer and Auto Fix Avatar",
+        items=(
+            ('256', "256", "256x256"),
+            ('512', "512", "512x512"),
+            ('1024', "1024", "1024x1024"),
+            ('2048', "2048", "2048x2048"),
+            ('4096', "4096", "4096x4096"),
+            ('8192', "8192", "8192x8192"),
+        ),
+        default='2048',
+    )
+    analyzer_force_pot: BoolProperty(
+        name="Force Power-of-Two",
+        description="Round resized textures down to the nearest power-of-two size",
+        default=True,
+    )
+    analyzer_auto_decimate: BoolProperty(
+        name="Auto Add Decimate",
+        description="Auto Fix Avatar adds non-destructive Decimate modifiers to heavy meshes",
+        default=False,
+    )
+
+    sync_auxiliary: PointerProperty(
+        name="Auxiliary",
+        description="Optional second object kept in sync with the active object (e.g. teeth or eyelashes)",
+        type=bpy.types.Object,
+        poll=_poll_mesh,
+    )
+    sync_shapekey: EnumProperty(
+        name="Shape Key",
+        description="Shape key to sync, sculpt, or reset, taken from the active object",
+        items=_active_shapekey_items,
+    )
+
+    batch_shapekey_names: StringProperty(
+        name="Names",
+        description="Comma-separated shape key names to create, e.g. 'Smile, Frown, Angry'",
+        default="",
+    )
+    batch_page: IntProperty(
+        name="Page",
+        default=0,
+        min=0,
+    )
+    batch_expanded: BoolProperty(
+        name="Show Shape Key List",
+        default=False,
+    )
+
+    vertex_error_input: StringProperty(
+        name="Vertex Indices",
+        description="Paste the vertex index numbers from a Unity unweighted-vertex error message",
+        default="",
     )
 
 

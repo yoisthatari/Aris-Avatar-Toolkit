@@ -1,7 +1,12 @@
+import json
+
 import bpy
 from bpy.types import Context, Operator
+from mathutils import Matrix
 
 from ..core import common
+
+_POSE_BACKUP_KEY = "aat_pose_backup"
 
 
 class AAT_OT_start_pose_mode(Operator):
@@ -96,10 +101,77 @@ class AAT_OT_apply_as_rest_pose(Operator):
         return {'FINISHED'}
 
 
+class AAT_OT_store_pose(Operator):
+    bl_idname = "aat.store_pose"
+    bl_label = "Store Pose"
+    bl_description = "Save the armature's current pose so it can be restored later"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return common.get_armature(context) is not None
+
+    def execute(self, context: Context):
+        armature = common.get_armature(context)
+        data = {
+            pb.name: [value for row in pb.matrix_basis for value in row]
+            for pb in armature.pose.bones
+        }
+        armature[_POSE_BACKUP_KEY] = json.dumps(data)
+        self.report({'INFO'}, "Pose stored")
+        return {'FINISHED'}
+
+
+class AAT_OT_restore_pose(Operator):
+    bl_idname = "aat.restore_pose"
+    bl_label = "Restore Pose"
+    bl_description = "Restore the pose saved with Store Pose"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        armature = common.get_armature(context)
+        return armature is not None and _POSE_BACKUP_KEY in armature
+
+    def execute(self, context: Context):
+        armature = common.get_armature(context)
+        data = json.loads(armature[_POSE_BACKUP_KEY])
+        restored = 0
+        for pb in armature.pose.bones:
+            values = data.get(pb.name)
+            if values is None:
+                continue
+            pb.matrix_basis = Matrix((values[0:4], values[4:8], values[8:12], values[12:16]))
+            restored += 1
+        self.report({'INFO'}, f"Restored pose on {restored} bones")
+        return {'FINISHED'}
+
+
+class AAT_OT_reset_pose(Operator):
+    bl_idname = "aat.reset_pose"
+    bl_label = "Reset Pose"
+    bl_description = "Reset the armature to its bind pose without entering Pose Mode"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return common.get_armature(context) is not None
+
+    def execute(self, context: Context):
+        armature = common.get_armature(context)
+        for pb in armature.pose.bones:
+            pb.matrix_basis.identity()
+        self.report({'INFO'}, "Pose reset to bind pose")
+        return {'FINISHED'}
+
+
 _CLASSES = (
     AAT_OT_start_pose_mode,
     AAT_OT_stop_pose_mode,
     AAT_OT_apply_as_rest_pose,
+    AAT_OT_store_pose,
+    AAT_OT_restore_pose,
+    AAT_OT_reset_pose,
 )
 
 

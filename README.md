@@ -34,6 +34,8 @@ Source available: you can read the code and use the add-on freely, including for
 
 - Start and stop pose mode from the panel.
 - Apply as Rest Pose that also works on meshes with shape keys, which Blender cannot do natively.
+- Store and Restore Pose: save the current pose and bring it back later, useful for weight painting or clipping fixes without losing your place.
+- Reset Pose: resets the armature straight back to its bind pose, without needing to enter Pose Mode first.
 
 ### Clothing and weights
 
@@ -45,6 +47,10 @@ Source available: you can read the code and use the add-on freely, including for
 - Transfers every shape key from a source mesh to a target mesh, even across completely different topology. Pick the Source and Target in the Blendshape panel and click Transfer Blendshapes.
 - Pre-processing modifiers improve transfer quality: Subdivision Surface smooths the source so the transfer has more data to work with (1 to 2 levels is usually enough; higher levels get expensive on dense meshes), and Displace moves the source geometry along its normals to bring it closer to the target. Both have a preview toggle that shows their effect on the source mesh in the viewport.
 - Paintable transfer mask: red areas transfer fully, blue areas not at all. Click Draw Transfer Mask to paint, click again to finish, with Reset and Invert buttons for quick changes.
+
+### Blendshape Sync
+
+- Keeps the same shape key active by name across the active object, an Auxiliary object, and every selected mesh, and jumps into a focused Sculpt Mode session for editing it. See [docs/blendshape-sync.md](docs/blendshape-sync.md).
 
 ### Visemes
 
@@ -64,11 +70,22 @@ Source available: you can read the code and use the add-on freely, including for
 - Smooth Shape Keys: relaxes shape key deltas to fix jagged or crunchy deformation, with adjustable strength, an optional vertex mask, and optional backup copies of the originals.
 - Apply shape key to basis, with a reverted key kept for toggling back.
 - Remove empty shape keys, sort visemes to the top of the list.
+- Shapekey Batch Creator: paste a comma-separated list of names to generate empty shape keys across every selected mesh, plus a paginated, clickable list for browsing large shape key sets. See [docs/shapekey-batch-creator.md](docs/shapekey-batch-creator.md).
 
 ### Mesh and materials
 
 - Join and separate meshes, shape-key-aware merge doubles.
 - Merge duplicate .001-style materials, remove unused material slots.
+- Vertex Error Selector: paste the vertex index numbers from a Unity unweighted-vertex error and select exactly those vertices in Edit Mode. See [docs/vertex-error-selector.md](docs/vertex-error-selector.md).
+
+### Align tools
+
+- Vertex/Face Alignment: aligns the selected objects to a vertex or face center picked on the active object in Edit Mode. See [docs/vertex-face-alignment.md](docs/vertex-face-alignment.md).
+
+### Avatar Analyzer
+
+- Scores an avatar against VRChat's published performance rank thresholds (polygons, materials, mesh counts, bones, texture memory) for PC or Quest, with heavy-mesh and texture-hotspot breakdowns and a JSON report export.
+- Creator tools: Texture Optimizer (resize to a target size, power-of-two aware, with backup), Mesh Heatmap (visualize dense geometry), Auto Fix Avatar (one-click texture and decimation pass with undo), Restore Texture Size Backup, and a scene-wide Batch Report. See [docs/avatar-analyzer.md](docs/avatar-analyzer.md).
 
 ## Comparison with Cats
 
@@ -96,6 +113,17 @@ Source available: you can read the code and use the add-on freely, including for
 4. Fit clothing and transfer weights from the Clothing and Weights panel if you are assembling an outfit.
 5. Decimate if you are over your target platform's polygon budget.
 6. Click Export Model and bring the FBX into Unity.
+
+## Documentation
+
+Step by step usage guides for individual features live in [docs](docs):
+
+- [Blendshape Transfer](docs/blendshape-transfer.md)
+- [Vertex/Face Alignment](docs/vertex-face-alignment.md)
+- [Avatar Analyzer](docs/avatar-analyzer.md)
+- [Blendshape Sync](docs/blendshape-sync.md)
+- [Shapekey Batch Creator](docs/shapekey-batch-creator.md)
+- [Vertex Error Selector](docs/vertex-error-selector.md)
 
 ## Building from source
 

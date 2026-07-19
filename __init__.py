@@ -1,7 +1,10 @@
 from . import core
 from .core import properties
 from .operators import (
+    align_tools,
     armature_ops,
+    avatar_analyzer,
+    blendshape_sync,
     blendshape_transfer,
     clothing_fit,
     decimation,
@@ -13,6 +16,7 @@ from .operators import (
     pose_ops,
     shapekey_ops,
     translate_ops,
+    vertex_tools,
     visemes,
     weight_transfer,
 )
@@ -29,11 +33,15 @@ _MODULES = (
     clothing_fit,
     weight_transfer,
     blendshape_transfer,
+    blendshape_sync,
     shapekey_ops,
     mesh_ops,
+    vertex_tools,
     material_ops,
     decimation,
     translate_ops,
+    align_tools,
+    avatar_analyzer,
     panels,
 )
 
