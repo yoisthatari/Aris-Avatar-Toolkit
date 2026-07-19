@@ -157,6 +157,11 @@ class AAT_PT_clothing(_BasePanel, Panel):
         box.prop(settings, "cloth_offset")
         box.prop(settings, "cloth_smooth_factor")
         box.prop(settings, "cloth_smooth_iterations")
+        obj = context.active_object
+        if obj and obj.type == 'MESH':
+            box.prop_search(settings, "cloth_offset_group", obj, "vertex_groups")
+            box.prop(settings, "cloth_extra_offset")
+            box.prop_search(settings, "cloth_pin_group", obj, "vertex_groups")
         col = box.column()
         col.scale_y = 1.2
         col.operator("aat.fit_clothing")

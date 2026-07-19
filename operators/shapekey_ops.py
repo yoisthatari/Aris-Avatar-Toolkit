@@ -162,6 +162,11 @@ class AAT_OT_smooth_shapekeys(Operator):
         description="Optional vertex group that limits where smoothing applies",
         default="",
     )
+    create_backup: bpy.props.BoolProperty(
+        name="Backup Originals",
+        description="Keep an untouched copy of each key as 'name.orig' before smoothing",
+        default=False,
+    )
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -178,7 +183,7 @@ class AAT_OT_smooth_shapekeys(Operator):
         mesh = obj.data
         key_blocks = mesh.shape_keys.key_blocks
         if self.all_keys:
-            keys = list(key_blocks[1:])
+            keys = [kb for kb in key_blocks[1:] if not kb.name.endswith(".orig")]
         else:
             key = obj.active_shape_key
             if key is None or obj.active_shape_key_index == 0:
@@ -209,6 +214,14 @@ class AAT_OT_smooth_shapekeys(Operator):
         for kb in keys:
             data = np.empty(n * 3, dtype=np.float64)
             kb.data.foreach_get("co", data)
+            if self.create_backup:
+                backup_name = kb.name + ".orig"
+                existing = key_blocks.get(backup_name)
+                if existing is not None:
+                    obj.shape_key_remove(existing)
+                backup = obj.shape_key_add(name=backup_name, from_mix=False)
+                backup.data.foreach_set("co", data)
+                backup.mute = True
             deltas = data.reshape(-1, 3) - basis
             for _ in range(self.iterations):
                 averaged = common.neighbor_average(deltas, edges, n)

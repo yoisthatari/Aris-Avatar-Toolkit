@@ -22,11 +22,26 @@ def _apply_deltas(obj, deltas):
     mesh.update()
 
 
-def _compute_push(bvh, to_body, to_cloth, mesh, offset):
+def _vertex_group_weights(obj, name):
+    weights = np.zeros(len(obj.data.vertices), dtype=np.float64)
+    group = obj.vertex_groups.get(name) if name else None
+    if group is not None:
+        for vertex in obj.data.vertices:
+            for entry in vertex.groups:
+                if entry.group == group.index:
+                    weights[vertex.index] = entry.weight
+                    break
+    return weights
+
+
+def _compute_push(bvh, to_body, to_cloth, mesh, offsets, pinned):
     n = len(mesh.vertices)
     deltas = np.zeros((n, 3), dtype=np.float64)
     moved = np.zeros(n, dtype=bool)
     for vertex in mesh.vertices:
+        if pinned[vertex.index]:
+            continue
+        offset = offsets[vertex.index]
         co = to_body @ vertex.co
         location, normal, _face, _dist = bvh.find_nearest(co)
         if location is None:
@@ -83,9 +98,12 @@ class AAT_OT_fit_clothing(Operator):
             to_body = body.matrix_world.inverted() @ cloth.matrix_world
             to_cloth = to_body.inverted()
             edges = common.edge_index_array(mesh)
+            offsets = offset + settings.cloth_extra_offset * _vertex_group_weights(
+                cloth, settings.cloth_offset_group)
+            pinned = _vertex_group_weights(cloth, settings.cloth_pin_group) > 0.5
 
             for _ in range(2):
-                deltas, moved = _compute_push(bvh, to_body, to_cloth, mesh, offset)
+                deltas, moved = _compute_push(bvh, to_body, to_cloth, mesh, offsets, pinned)
                 if not moved.any():
                     break
                 fixed = deltas[moved].copy()
@@ -93,10 +111,11 @@ class AAT_OT_fit_clothing(Operator):
                     averaged = common.neighbor_average(deltas, edges, n)
                     deltas = deltas * (1.0 - factor) + averaged * factor
                     deltas[moved] = fixed
+                    deltas[pinned] = 0.0
                 _apply_deltas(cloth, deltas)
                 total_moved += int(moved.sum())
 
-            deltas, moved = _compute_push(bvh, to_body, to_cloth, mesh, offset)
+            deltas, moved = _compute_push(bvh, to_body, to_cloth, mesh, offsets, pinned)
             if moved.any():
                 _apply_deltas(cloth, deltas)
 

@@ -5,6 +5,7 @@ from bpy.props import (
     FloatProperty,
     IntProperty,
     PointerProperty,
+    StringProperty,
 )
 from bpy.types import PropertyGroup
 
@@ -201,6 +202,25 @@ class AATSettings(PropertyGroup):
         default=10,
         min=0,
         max=200,
+    )
+    cloth_offset_group: StringProperty(
+        name="Offset Group",
+        description="Optional vertex group whose weights add extra offset in that region",
+        default="",
+    )
+    cloth_extra_offset: FloatProperty(
+        name="Extra Offset",
+        description="Additional offset applied at full offset group weight",
+        default=0.005,
+        min=0.0,
+        max=0.5,
+        precision=4,
+        subtype='DISTANCE',
+    )
+    cloth_pin_group: StringProperty(
+        name="Pin Group",
+        description="Optional vertex group whose vertices are never moved by the fit",
+        default="",
     )
 
     wt_max_distance: FloatProperty(
