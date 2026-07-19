@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0 — 2026-07-19
+
+- **Elastic Clothing Fit**: pushes clothing out of the body with an elastic
+  falloff — UV and topology safe, shape keys carried along
+- **Robust Weight Transfer**: body-to-clothing weight transfer using
+  confident surface matches plus diffusion inpainting for uncertain areas
+  (based on the SIGGRAPH Asia 2023 paper "Robust Skin Weights Transfer via
+  Weight Inpainting" by Abdrashitov et al.)
+- **Smooth Shape Keys**: relaxes shape key deltas to fix jagged or crunchy
+  deformation, with optional vertex group mask
+- New "Clothing & Weights" panel
+
 ## 1.0.0 — 2026-07-19
 
 Initial release, built for Blender 5.2 LTS.

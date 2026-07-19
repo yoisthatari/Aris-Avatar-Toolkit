@@ -2,6 +2,7 @@ from . import core
 from .core import properties
 from .operators import (
     armature_ops,
+    clothing_fit,
     decimation,
     eye_tracking,
     fix_model,
@@ -11,6 +12,7 @@ from .operators import (
     shapekey_ops,
     translate_ops,
     visemes,
+    weight_transfer,
 )
 from .ui import panels
 
@@ -21,6 +23,8 @@ _MODULES = (
     pose_ops,
     visemes,
     eye_tracking,
+    clothing_fit,
+    weight_transfer,
     shapekey_ops,
     mesh_ops,
     material_ops,

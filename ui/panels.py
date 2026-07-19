@@ -141,6 +141,36 @@ class AAT_PT_eye_tracking(_BasePanel, Panel):
         row.operator("aat.reset_eye_rotation", text="Reset")
 
 
+class AAT_PT_clothing(_BasePanel, Panel):
+    bl_idname = "AAT_PT_clothing"
+    bl_label = "Clothing & Weights"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context: Context) -> None:
+        layout = self.layout
+        settings = context.scene.aat
+        layout.prop(settings, "cloth_body_mesh")
+        layout.label(text="Acts on the selected meshes", icon='RESTRICT_SELECT_OFF')
+
+        box = layout.box()
+        box.label(text="Elastic Fit", icon='MOD_CLOTH')
+        box.prop(settings, "cloth_offset")
+        box.prop(settings, "cloth_smooth_factor")
+        box.prop(settings, "cloth_smooth_iterations")
+        col = box.column()
+        col.scale_y = 1.2
+        col.operator("aat.fit_clothing")
+
+        box = layout.box()
+        box.label(text="Weight Transfer", icon='MOD_VERTEX_WEIGHT')
+        box.prop(settings, "wt_max_distance")
+        box.prop(settings, "wt_max_angle")
+        box.prop(settings, "wt_smooth_iterations")
+        col = box.column()
+        col.scale_y = 1.2
+        col.operator("aat.transfer_weights")
+
+
 class AAT_PT_decimation(_BasePanel, Panel):
     bl_idname = "AAT_PT_decimation"
     bl_label = "Decimation"
@@ -175,6 +205,7 @@ class AAT_PT_shapekeys(_BasePanel, Panel):
         layout = self.layout
         col = layout.column(align=True)
         col.operator("aat.shapekey_to_basis", icon='SHAPEKEY_DATA')
+        col.operator("aat.smooth_shapekeys", icon='MOD_SMOOTH')
         col.operator("aat.remove_empty_shapekeys", icon='TRASH')
         col.operator("aat.sort_shapekeys", icon='SORTALPHA')
 
@@ -205,7 +236,7 @@ class AAT_PT_credits(_BasePanel, Panel):
     def draw(self, context: Context) -> None:
         layout = self.layout
         col = layout.column(align=True)
-        col.label(text="Ari's Avatar Toolkit 1.0.0")
+        col.label(text="Ari's Avatar Toolkit 1.1.0")
         col.label(text="Made for Blender 5.2 LTS")
         op = layout.operator("wm.url_open", text="GitHub", icon='URL')
         op.url = "https://github.com/yoisthatari/Ari-s-Avatar-Toolkit"
@@ -218,6 +249,7 @@ _CLASSES = (
     AAT_PT_armature_tools,
     AAT_PT_visemes,
     AAT_PT_eye_tracking,
+    AAT_PT_clothing,
     AAT_PT_decimation,
     AAT_PT_shapekeys,
     AAT_PT_mesh_materials,

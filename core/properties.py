@@ -173,6 +173,60 @@ class AATSettings(PropertyGroup):
         default=True,
     )
 
+    cloth_body_mesh: EnumProperty(
+        name="Body Mesh",
+        description="Body mesh used as the fitting and weight source",
+        items=_mesh_items,
+    )
+    cloth_offset: FloatProperty(
+        name="Offset",
+        description="Distance the clothing is kept above the body surface",
+        default=0.003,
+        min=0.0,
+        max=0.5,
+        precision=4,
+        subtype='DISTANCE',
+    )
+    cloth_smooth_factor: FloatProperty(
+        name="Elasticity",
+        description="How far the fit adjustment spreads into surrounding vertices",
+        default=0.5,
+        min=0.0,
+        max=1.0,
+        subtype='FACTOR',
+    )
+    cloth_smooth_iterations: IntProperty(
+        name="Smoothing Passes",
+        description="Number of relaxation passes after pushing vertices out",
+        default=10,
+        min=0,
+        max=200,
+    )
+
+    wt_max_distance: FloatProperty(
+        name="Max Distance",
+        description="Surface matches beyond this distance count as uncertain and get inpainted",
+        default=0.05,
+        min=0.0001,
+        max=10.0,
+        precision=4,
+        subtype='DISTANCE',
+    )
+    wt_max_angle: FloatProperty(
+        name="Max Angle",
+        description="Normal difference in degrees above which a match counts as uncertain",
+        default=30.0,
+        min=1.0,
+        max=90.0,
+    )
+    wt_smooth_iterations: IntProperty(
+        name="Inpaint Passes",
+        description="Diffusion passes used to fill uncertain areas",
+        default=50,
+        min=0,
+        max=500,
+    )
+
     decimate_mode: EnumProperty(
         name="Mode",
         description="How meshes with shape keys are handled during decimation",

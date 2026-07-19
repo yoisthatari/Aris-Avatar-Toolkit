@@ -41,14 +41,24 @@ third-party importers.
 - Sets up `Eye_L` / `Eye_R` bones for modern bone-based eye tracking:
   renaming, Head parenting, upright orientation, plus test/reset rotation
 
+### 👕 Clothing & weights
+- **Elastic Fit**: pushes clothing meshes out of the body with an elastic
+  falloff — UV and topology safe, shape keys carried along
+- **Robust Weight Transfer**: body-to-clothing bone weights via confident
+  surface matching plus diffusion inpainting for problem areas (armpits,
+  chest, between legs) — no manual weight smoothing needed. Original
+  implementation of the SIGGRAPH Asia 2023 paper *Robust Skin Weights
+  Transfer via Weight Inpainting* (Abdrashitov et al.)
+
 ### 📉 Decimation
 - Global triangle budget distributed proportionally across meshes
 - **Safe mode** never touches meshes with shape keys; Selected and Full
   modes available when you need them
 
 ### 🎭 Shape keys, meshes & materials
-- Apply shape key to basis (with reverted key), remove empty shape keys,
-  sort visemes to the top
+- Apply shape key to basis (with reverted key), smooth shape key deltas
+  (with optional vertex mask), remove empty shape keys, sort visemes to
+  the top
 - Join / separate meshes, shape-key-aware merge doubles
 - Merge duplicate `.001`-style materials, remove unused material slots
 

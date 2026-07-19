@@ -218,3 +218,32 @@ def triangle_count(obj: Object) -> int:
 
 def sanitize_name(name: str) -> str:
     return name.strip().replace("　", " ")
+
+
+def edge_index_array(mesh_data):
+    import numpy as np
+
+    edges = np.empty(len(mesh_data.edges) * 2, dtype=np.int64)
+    mesh_data.edges.foreach_get("vertices", edges)
+    return edges.reshape(-1, 2)
+
+
+def neighbor_average(values, edges, count):
+    import numpy as np
+
+    sums = np.zeros((count, values.shape[1]), dtype=np.float64)
+    np.add.at(sums, edges[:, 0], values[edges[:, 1]])
+    np.add.at(sums, edges[:, 1], values[edges[:, 0]])
+    degree = np.zeros(count, dtype=np.float64)
+    np.add.at(degree, edges[:, 0], 1.0)
+    np.add.at(degree, edges[:, 1], 1.0)
+    degree[degree == 0.0] = 1.0
+    return sums / degree[:, None]
+
+
+def get_vertex_coords(mesh_data):
+    import numpy as np
+
+    coords = np.empty(len(mesh_data.vertices) * 3, dtype=np.float64)
+    mesh_data.vertices.foreach_get("co", coords)
+    return coords.reshape(-1, 3)

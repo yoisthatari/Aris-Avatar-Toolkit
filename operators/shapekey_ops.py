@@ -128,10 +128,103 @@ class AAT_OT_sort_shapekeys(Operator):
         return {'FINISHED'}
 
 
+class AAT_OT_smooth_shapekeys(Operator):
+    bl_idname = "aat.smooth_shapekeys"
+    bl_label = "Smooth Shape Keys"
+    bl_description = (
+        "Smooth the deformation of the active shape key (or all keys) by "
+        "relaxing its vertex deltas, removing jagged or crunchy areas"
+    )
+    bl_options = {'REGISTER', 'UNDO'}
+
+    factor: bpy.props.FloatProperty(
+        name="Factor",
+        description="Strength of each smoothing pass",
+        default=0.5,
+        min=0.0,
+        max=1.0,
+        subtype='FACTOR',
+    )
+    iterations: bpy.props.IntProperty(
+        name="Iterations",
+        description="Number of smoothing passes",
+        default=10,
+        min=1,
+        max=200,
+    )
+    all_keys: bpy.props.BoolProperty(
+        name="All Shape Keys",
+        description="Smooth every shape key instead of only the active one",
+        default=False,
+    )
+    mask_group: bpy.props.StringProperty(
+        name="Vertex Mask",
+        description="Optional vertex group that limits where smoothing applies",
+        default="",
+    )
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        obj = context.active_object
+        return obj is not None and common.has_shapekeys(obj)
+
+    def invoke(self, context: Context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context: Context):
+        import numpy as np
+
+        obj = context.active_object
+        mesh = obj.data
+        key_blocks = mesh.shape_keys.key_blocks
+        if self.all_keys:
+            keys = list(key_blocks[1:])
+        else:
+            key = obj.active_shape_key
+            if key is None or obj.active_shape_key_index == 0:
+                self.report({'ERROR'}, "Select a shape key other than the basis")
+                return {'CANCELLED'}
+            keys = [key]
+
+        n = len(mesh.vertices)
+        edges = common.edge_index_array(mesh)
+        basis = np.empty(n * 3, dtype=np.float64)
+        key_blocks[0].data.foreach_get("co", basis)
+        basis = basis.reshape(-1, 3)
+
+        mask = np.ones(n, dtype=np.float64)
+        if self.mask_group:
+            group = obj.vertex_groups.get(self.mask_group)
+            if group is None:
+                self.report({'ERROR'}, f"Vertex group '{self.mask_group}' not found")
+                return {'CANCELLED'}
+            mask = np.zeros(n, dtype=np.float64)
+            for vertex in mesh.vertices:
+                for entry in vertex.groups:
+                    if entry.group == group.index:
+                        mask[vertex.index] = entry.weight
+                        break
+
+        strength = (self.factor * mask)[:, None]
+        for kb in keys:
+            data = np.empty(n * 3, dtype=np.float64)
+            kb.data.foreach_get("co", data)
+            deltas = data.reshape(-1, 3) - basis
+            for _ in range(self.iterations):
+                averaged = common.neighbor_average(deltas, edges, n)
+                deltas = deltas * (1.0 - strength) + averaged * strength
+            kb.data.foreach_set("co", (basis + deltas).ravel())
+
+        mesh.update()
+        self.report({'INFO'}, f"Smoothed {len(keys)} shape keys")
+        return {'FINISHED'}
+
+
 _CLASSES = (
     AAT_OT_shapekey_to_basis,
     AAT_OT_remove_empty_shapekeys,
     AAT_OT_sort_shapekeys,
+    AAT_OT_smooth_shapekeys,
 )
 
 
