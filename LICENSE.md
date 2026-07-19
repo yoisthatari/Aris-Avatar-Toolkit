@@ -1,4 +1,4 @@
-# Ari's Avatar Toolkit — Source-Available License v1.0
+# Ari's Avatar Toolkit Source-Available License v1.0
 
 Copyright (c) 2026 Ari (yoisthatari). All rights reserved.
 
@@ -31,7 +31,7 @@ may NOT:
 1. **Modify** the Software, or create derivative works based on it, in whole
    or in part.
 2. **Redistribute** the Software, modified or unmodified, in any form or by
-   any means — including re-hosting, mirroring, bundling with other software,
+   any means, including re-hosting, mirroring, bundling with other software,
    or including it in model packages, paid or free.
 3. **Sublicense, sell, rent, or lease** the Software.
 4. **Remove or alter** any copyright, license, or attribution notices.
