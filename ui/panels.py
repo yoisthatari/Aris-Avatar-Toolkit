@@ -294,6 +294,17 @@ class AAT_PT_mesh_materials(_BasePanel, Panel):
         col.operator("aat.remove_unused_material_slots", icon='NODE_MATERIAL')
 
 
+class AAT_PT_align_tools(_BasePanel, Panel):
+    bl_idname = "AAT_PT_align_tools"
+    bl_label = "Align Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context: Context) -> None:
+        layout = self.layout
+        layout.label(text="Select a vertex/face on the active object in edit mode")
+        layout.operator("aat.align_to_element", icon='SNAP_VERTEX')
+
+
 class AAT_PT_credits(_BasePanel, Panel):
     bl_idname = "AAT_PT_credits"
     bl_label = "Info"
@@ -320,6 +331,7 @@ _CLASSES = (
     AAT_PT_decimation,
     AAT_PT_shapekeys,
     AAT_PT_mesh_materials,
+    AAT_PT_align_tools,
     AAT_PT_credits,
 )
 

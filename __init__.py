@@ -1,6 +1,7 @@
 from . import core
 from .core import properties
 from .operators import (
+    align_tools,
     armature_ops,
     blendshape_transfer,
     clothing_fit,
@@ -34,6 +35,7 @@ _MODULES = (
     material_ops,
     decimation,
     translate_ops,
+    align_tools,
     panels,
 )
 

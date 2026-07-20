@@ -25,6 +25,9 @@
   bone-heat weights
 - Remove End Bones: one-click cleanup of leftover _end bones
 - New Clothing and Weights panel
+- Vertex/Face Alignment: aligns the selected objects to a vertex or face
+  center picked on the active object in edit mode, with a new Align Tools
+  panel
 
 ## 1.0.0 (2026-07-19)
 

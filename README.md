@@ -70,6 +70,10 @@ Source available: you can read the code and use the add-on freely, including for
 - Join and separate meshes, shape-key-aware merge doubles.
 - Merge duplicate .001-style materials, remove unused material slots.
 
+### Align tools
+
+- Vertex/Face Alignment: aligns the selected objects to a vertex or face center picked on the active object in Edit Mode. See [docs/vertex-face-alignment.md](docs/vertex-face-alignment.md).
+
 ## Comparison with Cats
 
 | | Cats Blender Plugin | Ari's Avatar Toolkit |
@@ -96,6 +100,13 @@ Source available: you can read the code and use the add-on freely, including for
 4. Fit clothing and transfer weights from the Clothing and Weights panel if you are assembling an outfit.
 5. Decimate if you are over your target platform's polygon budget.
 6. Click Export Model and bring the FBX into Unity.
+
+## Documentation
+
+Step by step usage guides for individual features live in [docs](docs):
+
+- [Blendshape Transfer](docs/blendshape-transfer.md)
+- [Vertex/Face Alignment](docs/vertex-face-alignment.md)
 
 ## Building from source
 
