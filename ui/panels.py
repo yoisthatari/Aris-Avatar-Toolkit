@@ -52,6 +52,11 @@ class AAT_PT_main(_BasePanel, Panel):
             row.operator("aat.start_pose_mode", icon='POSE_HLT')
         layout.operator("aat.apply_as_rest_pose", icon='ARMATURE_DATA')
 
+        row = layout.row(align=True)
+        row.operator("aat.store_pose", text="Store", icon='KEYFRAME')
+        row.operator("aat.restore_pose", text="Restore", icon='LOOP_BACK')
+        row.operator("aat.reset_pose", text="Reset", icon='X')
+
 
 class AAT_PT_fix_options(_BasePanel, Panel):
     bl_idname = "AAT_PT_fix_options"
