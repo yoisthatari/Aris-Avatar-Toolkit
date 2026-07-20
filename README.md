@@ -46,6 +46,10 @@ Source available: you can read the code and use the add-on freely, including for
 - Pre-processing modifiers improve transfer quality: Subdivision Surface smooths the source so the transfer has more data to work with (1 to 2 levels is usually enough; higher levels get expensive on dense meshes), and Displace moves the source geometry along its normals to bring it closer to the target. Both have a preview toggle that shows their effect on the source mesh in the viewport.
 - Paintable transfer mask: red areas transfer fully, blue areas not at all. Click Draw Transfer Mask to paint, click again to finish, with Reset and Invert buttons for quick changes.
 
+### Blendshape Sync
+
+- Keeps the same shape key active by name across the active object, an Auxiliary object, and every selected mesh, and jumps into a focused Sculpt Mode session for editing it. See [docs/blendshape-sync.md](docs/blendshape-sync.md).
+
 ### Visemes
 
 - Generates the 15 standard vrc.v_* visemes from your A, O, and CH mouth shapes, with adjustable intensity.

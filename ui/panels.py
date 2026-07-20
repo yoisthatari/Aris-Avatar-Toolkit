@@ -262,6 +262,24 @@ class AAT_PT_blendshape(_BasePanel, Panel):
         col.operator("aat.transfer_blendshapes", icon='SHAPEKEY_DATA')
 
 
+class AAT_PT_blendshape_sync(_BasePanel, Panel):
+    bl_idname = "AAT_PT_blendshape_sync"
+    bl_label = "Blendshape Sync"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context: Context) -> None:
+        layout = self.layout
+        settings = context.scene.aat
+        layout.label(text="Shape key list comes from the active object", icon='INFO')
+        layout.prop(settings, "sync_auxiliary")
+        layout.prop(settings, "sync_shapekey")
+
+        col = layout.column(align=True)
+        col.operator("aat.sync_blendshape", icon='UV_SYNC_SELECT')
+        col.operator("aat.sculpt_shapekey_mode", icon='SCULPTMODE_HLT')
+        col.operator("aat.reset_synced_shapekeys", icon='LOOP_BACK')
+
+
 class AAT_PT_shapekeys(_BasePanel, Panel):
     bl_idname = "AAT_PT_shapekeys"
     bl_label = "Shape Keys"
@@ -439,6 +457,7 @@ _CLASSES = (
     AAT_PT_clothing,
     AAT_PT_blendshape,
     AAT_PT_decimation,
+    AAT_PT_blendshape_sync,
     AAT_PT_shapekeys,
     AAT_PT_mesh_materials,
     AAT_PT_align_tools,

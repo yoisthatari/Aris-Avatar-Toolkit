@@ -33,6 +33,9 @@
   reports, a JSON export, and creator tools (Texture Optimizer, Mesh
   Heatmap, Auto Fix Avatar with undo, Restore Texture Size Backup,
   scene-wide Batch Report)
+- Blendshape Sync: keeps a shape key active by name across the active
+  object, an Auxiliary object, and every selected mesh, with a Quick
+  Sculpt Mode shortcut and an instant reset
 
 ## 1.0.0 (2026-07-19)
 
