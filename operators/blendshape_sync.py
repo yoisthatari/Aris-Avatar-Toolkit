@@ -26,8 +26,9 @@ class AAT_OT_sync_blendshape(Operator):
     bl_idname = "aat.sync_blendshape"
     bl_label = "Sync Blendshape"
     bl_description = (
-        "Turn on the selected shape key, by name, on the active object, the "
-        "Auxiliary object, and every selected mesh that has a matching key"
+        "Magically turns on the selected shape key, by name, on the active "
+        "object, the Auxiliary object, and every selected mesh that has a "
+        "matching key"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -67,8 +68,8 @@ class AAT_OT_sculpt_shapekey_mode(Operator):
     bl_idname = "aat.sculpt_shapekey_mode"
     bl_label = "Quick Sculpt Mode"
     bl_description = (
-        "Highlight the selected shape key on the active object and enter Sculpt "
-        "Mode with only that shape key visible, for safe localized editing"
+        "Pops you into a focused Sculpt Mode session with only the selected "
+        "shape key visible, so you can edit it safely and perfectly"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -103,8 +104,8 @@ class AAT_OT_reset_synced_shapekeys(Operator):
     bl_idname = "aat.reset_synced_shapekeys"
     bl_label = "Reset Synced Shapekeys"
     bl_description = (
-        "Clear every shape key value back to 0 on the active object, the "
-        "Auxiliary object, and every selected mesh"
+        "Clears every shape key value back to 0 on the active object, the "
+        "Auxiliary object, and every selected mesh, sweet and simple"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

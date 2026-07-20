@@ -10,8 +10,8 @@ class AAT_OT_decimate(Operator):
     bl_idname = "aat.decimate"
     bl_label = "Decimate Model"
     bl_description = (
-        "Decimate the model down to the target triangle count. Safe mode never "
-        "touches meshes with shape keys"
+        "Gently trims the model down to the target triangle count. Safe mode "
+        "promises never to touch your precious meshes with shape keys"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

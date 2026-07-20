@@ -12,7 +12,7 @@ _POSE_BACKUP_KEY = "aat_pose_backup"
 class AAT_OT_start_pose_mode(Operator):
     bl_idname = "aat.start_pose_mode"
     bl_label = "Start Pose Mode"
-    bl_description = "Enter pose mode on the model's armature"
+    bl_description = "Slip into pose mode on the model's armature"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -32,7 +32,7 @@ class AAT_OT_start_pose_mode(Operator):
 class AAT_OT_stop_pose_mode(Operator):
     bl_idname = "aat.stop_pose_mode"
     bl_label = "Stop Pose Mode"
-    bl_description = "Reset the pose and return to object mode"
+    bl_description = "Reset the pose and gently return to object mode"
     bl_options = {'REGISTER', 'UNDO'}
 
     reset_pose: bpy.props.BoolProperty(
@@ -59,8 +59,9 @@ class AAT_OT_apply_as_rest_pose(Operator):
     bl_idname = "aat.apply_as_rest_pose"
     bl_label = "Apply as Rest Pose"
     bl_description = (
-        "Make the current pose the new rest pose. Meshes are updated to match, "
-        "including meshes with shape keys (which Blender cannot do on its own)"
+        "A little superpower: makes the current pose the new rest pose, "
+        "updating meshes to match, even ones with shape keys (which Blender "
+        "can't do on its own)"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -104,7 +105,7 @@ class AAT_OT_apply_as_rest_pose(Operator):
 class AAT_OT_store_pose(Operator):
     bl_idname = "aat.store_pose"
     bl_label = "Store Pose"
-    bl_description = "Save the armature's current pose so it can be restored later"
+    bl_description = "Save the armature's current pose so you can bring it back later"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -125,7 +126,7 @@ class AAT_OT_store_pose(Operator):
 class AAT_OT_restore_pose(Operator):
     bl_idname = "aat.restore_pose"
     bl_label = "Restore Pose"
-    bl_description = "Restore the pose saved with Store Pose"
+    bl_description = "Bring back the pose saved with Store Pose"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -150,7 +151,7 @@ class AAT_OT_restore_pose(Operator):
 class AAT_OT_reset_pose(Operator):
     bl_idname = "aat.reset_pose"
     bl_label = "Reset Pose"
-    bl_description = "Reset the armature to its bind pose without entering Pose Mode"
+    bl_description = "Snaps the armature straight back to its bind pose, no need to enter Pose Mode"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod

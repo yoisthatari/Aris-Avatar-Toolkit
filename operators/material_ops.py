@@ -23,8 +23,8 @@ class AAT_OT_merge_duplicate_materials(Operator):
     bl_idname = "aat.merge_duplicate_materials"
     bl_label = "Merge Duplicate Materials"
     bl_description = (
-        "Merge materials that are copies of each other (same base name and same "
-        "main texture), e.g. 'Skin', 'Skin.001', 'Skin.002'"
+        "Lovingly merges materials that are copies of each other (same base "
+        "name and same main texture), e.g. 'Skin', 'Skin.001', 'Skin.002'"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -71,7 +71,7 @@ class AAT_OT_merge_duplicate_materials(Operator):
 class AAT_OT_remove_unused_material_slots(Operator):
     bl_idname = "aat.remove_unused_material_slots"
     bl_label = "Remove Unused Material Slots"
-    bl_description = "Remove material slots that no face uses, on all meshes of the model"
+    bl_description = "Sweeps away material slots that no face uses, on all meshes of the model"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod

@@ -59,9 +59,9 @@ class AAT_OT_fit_clothing(Operator):
     bl_idname = "aat.fit_clothing"
     bl_label = "Fit Clothing"
     bl_description = (
-        "Push selected clothing meshes out of the body mesh with an elastic "
-        "falloff. UV and topology safe: only vertex positions move, and shape "
-        "keys are carried along"
+        "Gently pushes selected clothing meshes out of the body mesh with a "
+        "soft, elastic falloff. UV and topology safe: only vertex positions "
+        "move, and shape keys come along for the ride"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

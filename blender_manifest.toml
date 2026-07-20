@@ -3,7 +3,7 @@ schema_version = "1.0.0"
 id = "ari_avatar_toolkit"
 version = "1.1.0"
 name = "Ari's Avatar Toolkit"
-tagline = "Modern avatar optimization and rig fixing for Blender 5"
+tagline = "A cozy, magical avatar toolkit for Blender 5"
 maintainer = "Ari (yoisthatari)"
 type = "add-on"
 

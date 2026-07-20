@@ -28,8 +28,8 @@ class AAT_OT_create_visemes(Operator):
     bl_idname = "aat.create_visemes"
     bl_label = "Create Visemes"
     bl_description = (
-        "Generate the 15 standard visemes (vrc.v_aa ... vrc.v_th) from the "
-        "selected A, O and CH mouth shape keys"
+        "Generates the 15 standard visemes (vrc.v_aa ... vrc.v_th) straight "
+        "from your A, O and CH mouth shape keys"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -94,7 +94,7 @@ class AAT_OT_create_visemes(Operator):
 class AAT_OT_remove_visemes(Operator):
     bl_idname = "aat.remove_visemes"
     bl_label = "Remove Visemes"
-    bl_description = "Delete all vrc.v_* shape keys from the selected mesh"
+    bl_description = "Sweeps away all vrc.v_* shape keys from the selected mesh"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod

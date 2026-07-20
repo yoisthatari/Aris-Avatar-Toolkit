@@ -64,9 +64,9 @@ class AAT_OT_transfer_blendshapes(Operator):
     bl_idname = "aat.transfer_blendshapes"
     bl_label = "Transfer Blendshapes"
     bl_description = (
-        "Transfer every shape key from the source mesh to the target mesh, "
-        "even across different topology. Areas painted blue in the transfer "
-        "mask are left untouched"
+        "Copies every shape key from the source mesh to the target mesh with "
+        "a gentle kiss, even across totally different topology. Areas painted "
+        "blue in the transfer mask are left untouched"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -194,7 +194,7 @@ class AAT_OT_draw_transfer_mask(Operator):
     bl_label = "Draw Transfer Mask"
     bl_description = (
         "Paint where blendshapes transfer: red areas transfer fully, blue "
-        "areas not at all. Click again to finish painting"
+        "areas not at all. Click again to finish your masterpiece"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -223,7 +223,7 @@ class AAT_OT_draw_transfer_mask(Operator):
 class AAT_OT_reset_transfer_mask(Operator):
     bl_idname = "aat.reset_transfer_mask"
     bl_label = "Reset Mask"
-    bl_description = "Set the whole transfer mask back to full transfer (red)"
+    bl_description = "Sets the whole transfer mask back to full transfer (red), fresh as new"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -243,7 +243,7 @@ class AAT_OT_reset_transfer_mask(Operator):
 class AAT_OT_invert_transfer_mask(Operator):
     bl_idname = "aat.invert_transfer_mask"
     bl_label = "Invert Mask"
-    bl_description = "Swap transfer and no-transfer areas of the mask"
+    bl_description = "Swaps transfer and no-transfer areas of the mask, effortlessly"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod

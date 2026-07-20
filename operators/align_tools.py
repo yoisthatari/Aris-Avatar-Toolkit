@@ -10,8 +10,8 @@ class AAT_OT_align_to_element(Operator):
     bl_idname = "aat.align_to_element"
     bl_label = "Align by Vertex/Face"
     bl_description = (
-        "Move the selected mesh objects onto a vertex or face center you "
-        "selected in edit mode on the active object"
+        "Perfectly aligns the selected mesh objects onto a vertex or face "
+        "center you picked in edit mode on the active object"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

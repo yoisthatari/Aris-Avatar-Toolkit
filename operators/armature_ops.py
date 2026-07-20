@@ -10,7 +10,8 @@ class AAT_OT_merge_weights_to_parent(Operator):
     bl_idname = "aat.merge_weights_to_parent"
     bl_label = "Merge Weights to Parent"
     bl_description = (
-        "Delete the selected bones and merge their vertex weights into their parents"
+        "Delete the selected bones and gently merge their vertex weights into "
+        "their parents"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -73,7 +74,8 @@ class AAT_OT_remove_zero_weight_bones(Operator):
     bl_idname = "aat.remove_zero_weight_bones"
     bl_label = "Remove Zero-Weight Bones"
     bl_description = (
-        "Delete bones that carry no vertex weights (their weighted descendants are kept)"
+        "Sweep away bones that carry no vertex weights (their weighted "
+        "descendants are lovingly kept)"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -120,7 +122,7 @@ class AAT_OT_remove_zero_weight_bones(Operator):
 class AAT_OT_remove_constraints(Operator):
     bl_idname = "aat.remove_constraints"
     bl_label = "Remove Constraints"
-    bl_description = "Remove all bone constraints from the armature"
+    bl_description = "Clears out all bone constraints from the armature"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -141,7 +143,7 @@ class AAT_OT_remove_constraints(Operator):
 class AAT_OT_delete_bone_pattern(Operator):
     bl_idname = "aat.delete_bone_pattern"
     bl_label = "Delete Bones by Pattern"
-    bl_description = "Delete all bones whose names match a regular expression, merging weights upward"
+    bl_description = "Delete all bones whose names match a regular expression, merging weights upward with care"
     bl_options = {'REGISTER', 'UNDO'}
 
     pattern: bpy.props.StringProperty(
@@ -205,7 +207,7 @@ class AAT_OT_attach_mesh_auto_weights(Operator):
     bl_label = "Attach Mesh (Auto Weights)"
     bl_description = (
         "Parent the selected meshes to the model's armature and generate "
-        "automatic bone-heat weights for them"
+        "cozy automatic bone-heat weights for them, all in one click"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -268,8 +270,8 @@ class AAT_OT_remove_end_bones(Operator):
     bl_idname = "aat.remove_end_bones"
     bl_label = "Remove End Bones"
     bl_description = (
-        "Delete every leftover end bone (names ending in _end, _end_end, "
-        "_End.001 and similar), merging any weights into their parents"
+        "Tidies up every leftover end bone (names ending in _end, _end_end, "
+        "_End.001 and similar), blending any weights into their parents"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

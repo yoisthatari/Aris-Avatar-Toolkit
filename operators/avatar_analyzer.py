@@ -180,7 +180,7 @@ def analyze(context: Context, armature: Object, platform: str) -> AnalysisResult
 class AAT_OT_analyze_avatar(Operator):
     bl_idname = "aat.analyze_avatar"
     bl_label = "Analyze Avatar"
-    bl_description = "Score the selected avatar against VRChat's performance rank thresholds"
+    bl_description = "Scores your avatar against VRChat's performance rank thresholds, lovingly"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -206,7 +206,7 @@ class AAT_OT_analyze_avatar(Operator):
 class AAT_OT_export_analysis_report(Operator):
     bl_idname = "aat.export_analysis_report"
     bl_label = "Export Report JSON"
-    bl_description = "Analyze the selected avatar and save the results as a JSON report"
+    bl_description = "Analyzes the selected avatar and saves the results as a lovely little JSON report"
     bl_options = {'REGISTER'}
 
     filepath: StringProperty(subtype='FILE_PATH')
@@ -275,7 +275,7 @@ class AAT_OT_export_analysis_report(Operator):
 class AAT_OT_batch_report_scene(Operator):
     bl_idname = "aat.batch_report_scene"
     bl_label = "Batch Report (Scene)"
-    bl_description = "Analyze every armature in the scene against VRChat's performance ranks"
+    bl_description = "Analyzes every armature in the scene against VRChat's performance ranks, all at once"
     bl_options = {'REGISTER'}
 
     def execute(self, context: Context):
@@ -329,8 +329,8 @@ class AAT_OT_optimize_textures(Operator):
     bl_idname = "aat.optimize_textures"
     bl_label = "Texture Optimizer"
     bl_description = (
-        "Resize the avatar's textures down to the Max Texture setting, backing up "
-        "the originals so they can be restored"
+        "Gently resizes the avatar's textures down to the Max Texture setting, "
+        "backing up the originals so they can be restored"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -389,7 +389,7 @@ class AAT_OT_auto_fix_avatar(Operator):
     bl_idname = "aat.auto_fix_avatar"
     bl_label = "Auto Fix Avatar"
     bl_description = (
-        "One-click optimization pass: resizes textures to the Max Texture setting "
+        "A one-click beauty pass: resizes textures to the Max Texture setting "
         "and, if enabled, adds non-destructive Decimate modifiers to heavy meshes"
     )
     bl_options = {'REGISTER', 'UNDO'}
@@ -426,7 +426,7 @@ class AAT_OT_auto_fix_avatar(Operator):
 class AAT_OT_undo_auto_fix_session(Operator):
     bl_idname = "aat.undo_auto_fix_session"
     bl_label = "Undo Auto Fix Session"
-    bl_description = "Undo the last action. Use this right after Auto Fix Avatar"
+    bl_description = "Gently undoes the last action. Use this right after Auto Fix Avatar"
     bl_options = {'REGISTER'}
 
     def execute(self, context: Context):
@@ -448,8 +448,8 @@ class AAT_OT_restore_texture_backup(Operator):
     bl_idname = "aat.restore_texture_backup"
     bl_label = "Restore Texture Size Backup"
     bl_description = (
-        "Restore textures resized by Texture Optimizer or Auto Fix Avatar back to "
-        "their original size"
+        "Lovingly restores textures resized by Texture Optimizer or Auto Fix "
+        "Avatar back to their original size"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -517,8 +517,8 @@ class AAT_OT_toggle_mesh_heatmap(Operator):
     bl_idname = "aat.toggle_mesh_heatmap"
     bl_label = "Mesh Heatmap"
     bl_description = (
-        "Paint a red/blue overlay on the active mesh showing where geometry is "
-        "densest, as a guide for decimation. Click again to finish"
+        "Paints a pretty red/blue overlay on the active mesh showing where "
+        "geometry is densest, as a guide for decimation. Click again to finish"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

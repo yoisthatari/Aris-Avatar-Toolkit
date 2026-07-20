@@ -29,9 +29,9 @@ class AAT_OT_import_model(Operator):
     bl_idname = "aat.import_model"
     bl_label = "Import Model"
     bl_description = (
-        "Import a model in any supported format. PMX/PMD imports through the "
-        "official MMD Tools extension, VRM through the VRM add-on, and FBX, "
-        "glTF, OBJ and more through Blender's built-in importers"
+        "Bring your model home in any supported format. PMX/PMD imports through "
+        "the official MMD Tools extension, VRM through the VRM add-on, and FBX, "
+        "glTF, OBJ and more through Blender's cozy built-in importers"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -130,8 +130,8 @@ class AAT_OT_export_model(Operator):
     bl_idname = "aat.export_model"
     bl_label = "Export Model"
     bl_description = (
-        "Export the model as FBX with avatar-safe settings: shape keys "
-        "preserved, no leaf bones, textures embedded, Unity-friendly scale"
+        "Export your gorgeous model as FBX with avatar-safe settings: shape "
+        "keys preserved, no leaf bones, textures embedded, Unity-friendly scale"
     )
     bl_options = {'REGISTER'}
 
@@ -212,8 +212,9 @@ class AAT_OT_install_mmd_tools(Operator):
     bl_idname = "aat.install_mmd_tools"
     bl_label = "Install MMD Tools"
     bl_description = (
-        "Install the official MMD Tools extension from extensions.blender.org "
-        "for PMX/PMD import. Falls back to opening the download page"
+        "Beautifully installs the official MMD Tools extension from "
+        "extensions.blender.org for PMX/PMD import. Falls back to opening the "
+        "download page"
     )
     bl_options = {'REGISTER'}
 

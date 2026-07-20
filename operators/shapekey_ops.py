@@ -8,8 +8,9 @@ class AAT_OT_shapekey_to_basis(Operator):
     bl_idname = "aat.shapekey_to_basis"
     bl_label = "Apply Shape Key to Basis"
     bl_description = (
-        "Bake the active shape key (at its current value) into the basis so it "
-        "becomes the mesh's default shape. The key itself is kept, inverted"
+        "Bakes the active shape key (at its current value) into the basis so "
+        "it becomes the mesh's lovely new default shape. The key itself is "
+        "kept, inverted, just in case"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -55,7 +56,7 @@ class AAT_OT_shapekey_to_basis(Operator):
 class AAT_OT_remove_empty_shapekeys(Operator):
     bl_idname = "aat.remove_empty_shapekeys"
     bl_label = "Remove Empty Shape Keys"
-    bl_description = "Delete shape keys that do not actually move any vertices"
+    bl_description = "Sweeps away shape keys that do not actually move any vertices"
     bl_options = {'REGISTER', 'UNDO'}
 
     tolerance: bpy.props.FloatProperty(
@@ -102,7 +103,7 @@ class AAT_OT_remove_empty_shapekeys(Operator):
 class AAT_OT_sort_shapekeys(Operator):
     bl_idname = "aat.sort_shapekeys"
     bl_label = "Sort Shape Keys"
-    bl_description = "Move vrc.* shape keys (visemes) to the top, right after the basis"
+    bl_description = "Sweetly sorts vrc.* shape keys (visemes) to the top, right after the basis"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -132,8 +133,8 @@ class AAT_OT_smooth_shapekeys(Operator):
     bl_idname = "aat.smooth_shapekeys"
     bl_label = "Smooth Shape Keys"
     bl_description = (
-        "Smooth the deformation of the active shape key (or all keys) by "
-        "relaxing its vertex deltas, removing jagged or crunchy areas"
+        "Relaxes the deformation of the active shape key (or all keys) by "
+        "softening its vertex deltas, smoothing away crunchy or jagged areas"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -240,8 +241,9 @@ class AAT_OT_batch_create_shapekeys(Operator):
     bl_idname = "aat.batch_create_shapekeys"
     bl_label = "Batch Create Shape Keys"
     bl_description = (
-        "Create a new empty shape key for each comma-separated name, on every "
-        "selected mesh (or the active mesh if nothing else is selected)"
+        "Instantly creates a new empty shape key for each comma-separated "
+        "name, on every selected mesh (or the active mesh if nothing else is "
+        "selected). No more copy-pasting!"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -290,7 +292,7 @@ class AAT_OT_batch_create_shapekeys(Operator):
 class AAT_OT_batch_page_prev(Operator):
     bl_idname = "aat.batch_page_prev"
     bl_label = "Previous Page"
-    bl_description = "Show the previous page of shape keys"
+    bl_description = "Flips back to the previous page of shape keys"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -307,7 +309,7 @@ class AAT_OT_batch_page_prev(Operator):
 class AAT_OT_batch_page_next(Operator):
     bl_idname = "aat.batch_page_next"
     bl_label = "Next Page"
-    bl_description = "Show the next page of shape keys"
+    bl_description = "Flips ahead to the next page of shape keys"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -327,7 +329,7 @@ class AAT_OT_batch_page_next(Operator):
 class AAT_OT_batch_jump_to_shapekey(Operator):
     bl_idname = "aat.batch_jump_to_shapekey"
     bl_label = "Jump to Shape Key"
-    bl_description = "Set this as the active shape key on the active object"
+    bl_description = "Sets this as the active shape key on the active object"
     bl_options = {'REGISTER', 'UNDO'}
 
     index: bpy.props.IntProperty(default=0)

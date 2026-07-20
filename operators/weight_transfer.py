@@ -28,9 +28,10 @@ class AAT_OT_transfer_weights(Operator):
     bl_idname = "aat.transfer_weights"
     bl_label = "Transfer Weights"
     bl_description = (
-        "Transfer bone weights from the body to the selected meshes using "
-        "confident surface matches plus diffusion inpainting for uncertain "
-        "areas (armpits, between legs, chest), so no manual smoothing is needed"
+        "Flawlessly transfers bone weights from the body to the selected "
+        "meshes using confident surface matches plus diffusion inpainting for "
+        "tricky spots (armpits, between legs, chest), so no manual smoothing "
+        "is needed"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

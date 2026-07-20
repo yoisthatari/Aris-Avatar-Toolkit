@@ -8,8 +8,9 @@ class AAT_OT_setup_eye_bones(Operator):
     bl_idname = "aat.setup_eye_bones"
     bl_label = "Setup Eye Bones"
     bl_description = (
-        "Rename the chosen bones to Eye_L / Eye_R, optionally parent them to "
-        "the Head bone and straighten them upright"
+        "Renames the chosen bones to Eye_L / Eye_R, optionally parents them to "
+        "the Head bone, and straightens them upright for bright, modern eye "
+        "tracking"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -78,7 +79,7 @@ class AAT_OT_setup_eye_bones(Operator):
 class AAT_OT_test_eye_rotation(Operator):
     bl_idname = "aat.test_eye_rotation"
     bl_label = "Test Eye Rotation"
-    bl_description = "Rotate both eye bones in pose mode so you can verify they move correctly"
+    bl_description = "Rotate both eye bones in pose mode so you can see them sparkle and move correctly"
     bl_options = {'REGISTER', 'UNDO'}
 
     angle: bpy.props.FloatProperty(
@@ -113,7 +114,7 @@ class AAT_OT_test_eye_rotation(Operator):
 class AAT_OT_reset_eye_rotation(Operator):
     bl_idname = "aat.reset_eye_rotation"
     bl_label = "Reset Eye Rotation"
-    bl_description = "Clear the test rotation from the eye bones"
+    bl_description = "Clears the test rotation from the eye bones"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod

@@ -29,8 +29,9 @@ class AAT_OT_fix_model(Operator):
     bl_idname = "aat.fix_model"
     bl_label = "Fix Model"
     bl_description = (
-        "Fix the model in one click: translate and standardize bone names, "
-        "clean the hierarchy, remove junk bones, apply transforms and join meshes"
+        "Wave the magic wand and fix your model in one click: translate and "
+        "standardize bone names, tidy the hierarchy, sweep away junk bones, "
+        "apply transforms and join meshes"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

@@ -17,7 +17,7 @@ class _TranslateBase(Operator):
 class AAT_OT_translate_bones(_TranslateBase):
     bl_idname = "aat.translate_bones"
     bl_label = "Translate Bones"
-    bl_description = "Translate Japanese bone names to English (offline dictionary)"
+    bl_description = "Sweetly translates Japanese bone names to English (offline dictionary)"
 
     def execute(self, context: Context):
         armature = common.get_armature(context)
@@ -34,7 +34,7 @@ class AAT_OT_translate_bones(_TranslateBase):
 class AAT_OT_translate_shapekeys(_TranslateBase):
     bl_idname = "aat.translate_shapekeys"
     bl_label = "Translate Shape Keys"
-    bl_description = "Translate Japanese shape key names to English (offline dictionary)"
+    bl_description = "Sweetly translates Japanese shape key names to English (offline dictionary)"
 
     def execute(self, context: Context):
         armature = common.get_armature(context)
@@ -54,7 +54,7 @@ class AAT_OT_translate_shapekeys(_TranslateBase):
 class AAT_OT_translate_materials(_TranslateBase):
     bl_idname = "aat.translate_materials"
     bl_label = "Translate Materials"
-    bl_description = "Translate Japanese material names to English (offline dictionary)"
+    bl_description = "Sweetly translates Japanese material names to English (offline dictionary)"
 
     def execute(self, context: Context):
         armature = common.get_armature(context)
@@ -77,7 +77,7 @@ class AAT_OT_translate_materials(_TranslateBase):
 class AAT_OT_translate_objects(_TranslateBase):
     bl_idname = "aat.translate_objects"
     bl_label = "Translate Objects"
-    bl_description = "Translate Japanese object and mesh names to English (offline dictionary)"
+    bl_description = "Sweetly translates Japanese object and mesh names to English (offline dictionary)"
 
     def execute(self, context: Context):
         count = 0
@@ -97,7 +97,7 @@ class AAT_OT_translate_objects(_TranslateBase):
 class AAT_OT_translate_all(_TranslateBase):
     bl_idname = "aat.translate_all"
     bl_label = "Translate Everything"
-    bl_description = "Translate bones, shape keys, materials and objects in one go"
+    bl_description = "Translates bones, shape keys, materials and objects in one lovely go"
 
     def execute(self, context: Context):
         bpy.ops.aat.translate_bones()

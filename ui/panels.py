@@ -17,7 +17,7 @@ class _BasePanel:
 
 class AAT_PT_main(_BasePanel, Panel):
     bl_idname = "AAT_PT_main"
-    bl_label = "Model"
+    bl_label = "Avatar Home"
 
     def draw(self, context: Context) -> None:
         layout = self.layout
@@ -36,7 +36,7 @@ class AAT_PT_main(_BasePanel, Panel):
         armature = common.get_armature(context)
         if armature is None:
             box = layout.box()
-            box.label(text="No armature in the scene", icon='INFO')
+            box.label(text="No armature here yet", icon='INFO')
             box.label(text="Import a model to get started")
             return
 
@@ -61,7 +61,7 @@ class AAT_PT_main(_BasePanel, Panel):
 class AAT_PT_fix_options(_BasePanel, Panel):
     bl_idname = "AAT_PT_fix_options"
     bl_parent_id = "AAT_PT_main"
-    bl_label = "Fix Model Options"
+    bl_label = "Magic Wand Options"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -83,7 +83,7 @@ class AAT_PT_fix_options(_BasePanel, Panel):
 
 class AAT_PT_translation(_BasePanel, Panel):
     bl_idname = "AAT_PT_translation"
-    bl_label = "Translation"
+    bl_label = "Translation Magic"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -102,7 +102,7 @@ class AAT_PT_translation(_BasePanel, Panel):
 
 class AAT_PT_armature_tools(_BasePanel, Panel):
     bl_idname = "AAT_PT_armature_tools"
-    bl_label = "Armature"
+    bl_label = "Armature Spa"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -121,7 +121,7 @@ class AAT_PT_armature_tools(_BasePanel, Panel):
 
 class AAT_PT_visemes(_BasePanel, Panel):
     bl_idname = "AAT_PT_visemes"
-    bl_label = "Visemes"
+    bl_label = "Sweet Visemes"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -140,7 +140,7 @@ class AAT_PT_visemes(_BasePanel, Panel):
 
 class AAT_PT_eye_tracking(_BasePanel, Panel):
     bl_idname = "AAT_PT_eye_tracking"
-    bl_label = "Eye Tracking"
+    bl_label = "Bright Eyes"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -160,7 +160,7 @@ class AAT_PT_eye_tracking(_BasePanel, Panel):
 
 class AAT_PT_clothing(_BasePanel, Panel):
     bl_idname = "AAT_PT_clothing"
-    bl_label = "Clothing & Weights"
+    bl_label = "Wardrobe & Fits"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -195,7 +195,7 @@ class AAT_PT_clothing(_BasePanel, Panel):
 
 class AAT_PT_decimation(_BasePanel, Panel):
     bl_idname = "AAT_PT_decimation"
-    bl_label = "Decimation"
+    bl_label = "Gentle Decimation"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -220,7 +220,7 @@ class AAT_PT_decimation(_BasePanel, Panel):
 
 class AAT_PT_blendshape(_BasePanel, Panel):
     bl_idname = "AAT_PT_blendshape"
-    bl_label = "Blendshape"
+    bl_label = "Blendshape Kisses"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -287,7 +287,7 @@ class AAT_PT_blendshape_sync(_BasePanel, Panel):
 
 class AAT_PT_shapekeys(_BasePanel, Panel):
     bl_idname = "AAT_PT_shapekeys"
-    bl_label = "Shape Keys"
+    bl_label = "Shape Key Sculpting"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -327,7 +327,7 @@ class AAT_PT_shapekeys(_BasePanel, Panel):
 
 class AAT_PT_mesh_materials(_BasePanel, Panel):
     bl_idname = "AAT_PT_mesh_materials"
-    bl_label = "Mesh & Materials"
+    bl_label = "Mesh & Material Makeovers"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -345,7 +345,7 @@ class AAT_PT_mesh_materials(_BasePanel, Panel):
 
 class AAT_PT_vertex_tools(_BasePanel, Panel):
     bl_idname = "AAT_PT_vertex_tools"
-    bl_label = "Vertex Error Selector"
+    bl_label = "Vertex Rescue"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -358,7 +358,7 @@ class AAT_PT_vertex_tools(_BasePanel, Panel):
 
 class AAT_PT_align_tools(_BasePanel, Panel):
     bl_idname = "AAT_PT_align_tools"
-    bl_label = "Align Tools"
+    bl_label = "Perfect Alignment"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -373,13 +373,13 @@ def _rank_icon(rank: str) -> str:
 
 class AAT_PT_avatar_analyzer(_BasePanel, Panel):
     bl_idname = "AAT_PT_avatar_analyzer"
-    bl_label = "Avatar Analyzer"
+    bl_label = "Beauty Check"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
         layout = self.layout
         settings = context.scene.aat
-        layout.label(text="Scores the avatar against VRChat's performance ranks", icon='INFO')
+        layout.label(text="Scores your avatar against VRChat's official performance ranks", icon='INFO')
         layout.prop(settings, "analyzer_armature")
         layout.prop(settings, "analyzer_platform")
         row = layout.row(align=True)
@@ -391,7 +391,7 @@ class AAT_PT_avatar_analyzer(_BasePanel, Panel):
 class AAT_PT_analyzer_tools(_BasePanel, Panel):
     bl_idname = "AAT_PT_analyzer_tools"
     bl_parent_id = "AAT_PT_avatar_analyzer"
-    bl_label = "Creator Tools"
+    bl_label = "Vanity Table"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -423,7 +423,7 @@ class AAT_PT_analyzer_results(_BasePanel, Panel):
         layout = self.layout
         result = avatar_analyzer.get_last_result()
         if result is None:
-            layout.label(text="Click Analyze Avatar to see results", icon='INFO')
+            layout.label(text="Click Analyze Avatar to see your results", icon='INFO')
         else:
             box = layout.box()
             box.label(
@@ -479,14 +479,14 @@ class AAT_PT_analyzer_results(_BasePanel, Panel):
 
 class AAT_PT_credits(_BasePanel, Panel):
     bl_idname = "AAT_PT_credits"
-    bl_label = "Info"
+    bl_label = "With Love"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
         layout = self.layout
         col = layout.column(align=True)
-        col.label(text="Ari's Avatar Toolkit 1.1.0")
-        col.label(text="Made for Blender 5.2 LTS")
+        col.label(text="Ari's Avatar Toolkit 1.1.0", icon='HEART')
+        col.label(text="Made with love for Blender 5.2 LTS")
         op = layout.operator("wm.url_open", text="GitHub", icon='URL')
         op.url = "https://github.com/yoisthatari/Ari-s-Avatar-Toolkit"
 

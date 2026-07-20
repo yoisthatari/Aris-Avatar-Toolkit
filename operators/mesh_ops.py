@@ -7,7 +7,7 @@ from ..core import common
 class AAT_OT_join_meshes(Operator):
     bl_idname = "aat.join_meshes"
     bl_label = "Join Meshes"
-    bl_description = "Join all meshes bound to the armature into one 'Body' mesh"
+    bl_description = "Gracefully joins all meshes bound to the armature into one 'Body' mesh"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -37,7 +37,7 @@ class AAT_OT_join_meshes(Operator):
 class AAT_OT_separate_by_materials(Operator):
     bl_idname = "aat.separate_by_materials"
     bl_label = "Separate by Materials"
-    bl_description = "Split the active mesh into one object per material"
+    bl_description = "Gracefully splits the active mesh into one object per material"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -57,7 +57,7 @@ class AAT_OT_separate_by_materials(Operator):
 class AAT_OT_separate_loose_parts(Operator):
     bl_idname = "aat.separate_loose_parts"
     bl_label = "Separate Loose Parts"
-    bl_description = "Split the active mesh into its disconnected pieces"
+    bl_description = "Gracefully splits the active mesh into its disconnected pieces"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -78,8 +78,8 @@ class AAT_OT_remove_doubles(Operator):
     bl_idname = "aat.remove_doubles"
     bl_label = "Merge Doubles"
     bl_description = (
-        "Merge duplicate vertices on the active mesh. Skipped automatically on "
-        "meshes with shape keys unless forced, since merging can break them"
+        "Tidies up duplicate vertices on the active mesh. Skipped automatically "
+        "on meshes with shape keys unless forced, since merging can break them"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
