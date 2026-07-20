@@ -416,6 +416,21 @@ class AATSettings(PropertyGroup):
         items=_active_shapekey_items,
     )
 
+    batch_shapekey_names: StringProperty(
+        name="Names",
+        description="Comma-separated shape key names to create, e.g. 'Smile, Frown, Angry'",
+        default="",
+    )
+    batch_page: IntProperty(
+        name="Page",
+        default=0,
+        min=0,
+    )
+    batch_expanded: BoolProperty(
+        name="Show Shape Key List",
+        default=False,
+    )
+
 
 _CLASSES = (AATSettings,)
 

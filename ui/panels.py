@@ -4,7 +4,7 @@ import bpy
 from bpy.types import Context, Panel
 
 from ..core import common
-from ..operators import avatar_analyzer, import_export
+from ..operators import avatar_analyzer, import_export, shapekey_ops
 
 CATEGORY = "Ari's Toolkit"
 
@@ -287,11 +287,37 @@ class AAT_PT_shapekeys(_BasePanel, Panel):
 
     def draw(self, context: Context) -> None:
         layout = self.layout
+        settings = context.scene.aat
         col = layout.column(align=True)
         col.operator("aat.shapekey_to_basis", icon='SHAPEKEY_DATA')
         col.operator("aat.smooth_shapekeys", icon='MOD_SMOOTH')
         col.operator("aat.remove_empty_shapekeys", icon='TRASH')
         col.operator("aat.sort_shapekeys", icon='SORTALPHA')
+
+        box = layout.box()
+        box.label(text="Batch Creator", icon='PRESET_NEW')
+        box.prop(settings, "batch_shapekey_names", text="")
+        box.operator("aat.batch_create_shapekeys", icon='ADD')
+
+        obj = context.active_object
+        if obj is not None and common.has_shapekeys(obj):
+            header = box.row()
+            icon = 'TRIA_DOWN' if settings.batch_expanded else 'TRIA_RIGHT'
+            header.prop(settings, "batch_expanded", text="Shape Key List", icon=icon, emboss=False)
+            if settings.batch_expanded:
+                names = [kb.name for kb in obj.data.shape_keys.key_blocks[1:]]
+                page_size = shapekey_ops.PAGE_SIZE
+                max_page = max((len(names) - 1) // page_size, 0)
+                page = min(settings.batch_page, max_page)
+                start = page * page_size
+                for offset, name in enumerate(names[start:start + page_size]):
+                    row = box.row(align=True)
+                    op = row.operator("aat.batch_jump_to_shapekey", text=name, icon='SHAPEKEY_DATA')
+                    op.index = start + offset + 1
+                nav = box.row(align=True)
+                nav.operator("aat.batch_page_prev", text="<")
+                nav.label(text=f"Page {page + 1} / {max_page + 1}")
+                nav.operator("aat.batch_page_next", text=">")
 
 
 class AAT_PT_mesh_materials(_BasePanel, Panel):

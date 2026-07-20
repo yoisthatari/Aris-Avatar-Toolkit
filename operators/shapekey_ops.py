@@ -233,11 +233,126 @@ class AAT_OT_smooth_shapekeys(Operator):
         return {'FINISHED'}
 
 
+PAGE_SIZE = 10
+
+
+class AAT_OT_batch_create_shapekeys(Operator):
+    bl_idname = "aat.batch_create_shapekeys"
+    bl_label = "Batch Create Shape Keys"
+    bl_description = (
+        "Create a new empty shape key for each comma-separated name, on every "
+        "selected mesh (or the active mesh if nothing else is selected)"
+    )
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        settings = getattr(context.scene, "aat", None)
+        return settings is not None and settings.batch_shapekey_names.strip() != ""
+
+    def execute(self, context: Context):
+        settings = context.scene.aat
+        names = [name.strip() for name in settings.batch_shapekey_names.split(",")]
+        names = [name for name in names if name]
+        if not names:
+            self.report({'ERROR'}, "No shape key names given")
+            return {'CANCELLED'}
+
+        meshes = [obj for obj in context.selected_objects if obj.type == 'MESH']
+        if not meshes:
+            active = context.active_object
+            if active is not None and active.type == 'MESH':
+                meshes = [active]
+        if not meshes:
+            self.report({'ERROR'}, "Select at least one mesh")
+            return {'CANCELLED'}
+
+        created = 0
+        skipped = 0
+        for mesh in meshes:
+            if mesh.data.shape_keys is None:
+                mesh.shape_key_add(name="Basis", from_mix=False)
+            key_blocks = mesh.data.shape_keys.key_blocks
+            for name in names:
+                if name in key_blocks:
+                    skipped += 1
+                    continue
+                mesh.shape_key_add(name=name, from_mix=False)
+                created += 1
+
+        message = f"Created {created} shape keys across {len(meshes)} meshes"
+        if skipped:
+            message += f", skipped {skipped} that already existed"
+        self.report({'INFO'}, message)
+        return {'FINISHED'}
+
+
+class AAT_OT_batch_page_prev(Operator):
+    bl_idname = "aat.batch_page_prev"
+    bl_label = "Previous Page"
+    bl_description = "Show the previous page of shape keys"
+    bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        settings = getattr(context.scene, "aat", None)
+        return settings is not None and settings.batch_page > 0
+
+    def execute(self, context: Context):
+        settings = context.scene.aat
+        settings.batch_page = max(settings.batch_page - 1, 0)
+        return {'FINISHED'}
+
+
+class AAT_OT_batch_page_next(Operator):
+    bl_idname = "aat.batch_page_next"
+    bl_label = "Next Page"
+    bl_description = "Show the next page of shape keys"
+    bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        obj = context.active_object
+        return obj is not None and common.has_shapekeys(obj)
+
+    def execute(self, context: Context):
+        settings = context.scene.aat
+        obj = context.active_object
+        count = len(obj.data.shape_keys.key_blocks) - 1
+        max_page = max((count - 1) // PAGE_SIZE, 0)
+        settings.batch_page = min(settings.batch_page + 1, max_page)
+        return {'FINISHED'}
+
+
+class AAT_OT_batch_jump_to_shapekey(Operator):
+    bl_idname = "aat.batch_jump_to_shapekey"
+    bl_label = "Jump to Shape Key"
+    bl_description = "Set this as the active shape key on the active object"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    index: bpy.props.IntProperty(default=0)
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        obj = context.active_object
+        return obj is not None and common.has_shapekeys(obj)
+
+    def execute(self, context: Context):
+        obj = context.active_object
+        if 0 <= self.index < len(obj.data.shape_keys.key_blocks):
+            obj.active_shape_key_index = self.index
+        return {'FINISHED'}
+
+
 _CLASSES = (
     AAT_OT_shapekey_to_basis,
     AAT_OT_remove_empty_shapekeys,
     AAT_OT_sort_shapekeys,
     AAT_OT_smooth_shapekeys,
+    AAT_OT_batch_create_shapekeys,
+    AAT_OT_batch_page_prev,
+    AAT_OT_batch_page_next,
+    AAT_OT_batch_jump_to_shapekey,
 )
 
 
