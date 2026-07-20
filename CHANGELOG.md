@@ -39,6 +39,8 @@
 - Shapekey Batch Creator: paste a comma-separated list of names to
   generate empty shape keys across every selected mesh, with a
   paginated, clickable shape key list
+- Vertex Error Selector: paste vertex index numbers from a Unity
+  unweighted-vertex error to select exactly those vertices in Edit Mode
 
 ## 1.0.0 (2026-07-19)
 

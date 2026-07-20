@@ -431,6 +431,12 @@ class AATSettings(PropertyGroup):
         default=False,
     )
 
+    vertex_error_input: StringProperty(
+        name="Vertex Indices",
+        description="Paste the vertex index numbers from a Unity unweighted-vertex error message",
+        default="",
+    )
+
 
 _CLASSES = (AATSettings,)
 

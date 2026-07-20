@@ -338,6 +338,19 @@ class AAT_PT_mesh_materials(_BasePanel, Panel):
         col.operator("aat.remove_unused_material_slots", icon='NODE_MATERIAL')
 
 
+class AAT_PT_vertex_tools(_BasePanel, Panel):
+    bl_idname = "AAT_PT_vertex_tools"
+    bl_label = "Vertex Error Selector"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context: Context) -> None:
+        layout = self.layout
+        settings = context.scene.aat
+        layout.label(text="Paste vertex indices from a Unity error message", icon='INFO')
+        layout.prop(settings, "vertex_error_input", text="")
+        layout.operator("aat.select_error_vertices", icon='VIEWZOOM')
+
+
 class AAT_PT_align_tools(_BasePanel, Panel):
     bl_idname = "AAT_PT_align_tools"
     bl_label = "Align Tools"
@@ -486,6 +499,7 @@ _CLASSES = (
     AAT_PT_blendshape_sync,
     AAT_PT_shapekeys,
     AAT_PT_mesh_materials,
+    AAT_PT_vertex_tools,
     AAT_PT_align_tools,
     AAT_PT_avatar_analyzer,
     AAT_PT_analyzer_tools,

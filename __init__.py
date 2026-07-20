@@ -16,6 +16,7 @@ from .operators import (
     pose_ops,
     shapekey_ops,
     translate_ops,
+    vertex_tools,
     visemes,
     weight_transfer,
 )
@@ -35,6 +36,7 @@ _MODULES = (
     blendshape_sync,
     shapekey_ops,
     mesh_ops,
+    vertex_tools,
     material_ops,
     decimation,
     translate_ops,
