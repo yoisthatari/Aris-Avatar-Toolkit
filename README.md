@@ -1,122 +1,118 @@
 # Ari's Avatar Toolkit
 
-A modern avatar workflow toolkit for Blender 5.2 LTS.
+Welcome to your lovely new avatar workflow toolkit, handcrafted for Blender 5.2 LTS! 
 
-Inspired by the long-unmaintained [Cats Blender Plugin](https://github.com/absolute-quantum/cats-blender-plugin), rebuilt from scratch for the current Blender Python API and the Extensions platform. No legacy code, no online services, no bundled third-party importers.
+Inspired by the wonderful but long-unmaintained [Cats Blender Plugin](https://github.com/absolute-quantum/cats-blender-plugin), this add-on has been rebuilt from scratch for the modern Blender Python API and the shiny new Extensions platform. No dusty legacy code, no messy online services, and no bulky bundled importers—just pure, lightweight magic.
 
-Source available: you can read the code and use the add-on freely, including for commercial avatar work. Modification and redistribution are not permitted. See [LICENSE.md](LICENSE.md).
+Source available: you can peek at the code and use the add-on freely, even for your commercial avatar commissions! (Modification and redistribution are not permitted, though. See our little [LICENSE.md](LICENSE.md)).
 
-## Features
+---
 
-### Import and export
+## Magical Features
 
-- Import Model: one button for every supported format. PMX and PMD import through the official MMD Tools extension, VRM through the VRM add-on, and FBX, glTF, OBJ, STL, and Collada through Blender's built-in importers. The imported armature is selected automatically.
-- Install MMD Tools: one click installs the official MMD Tools extension straight from extensions.blender.org through Blender's extension system (no bundled forks, always up to date).
-- Export Model: FBX export with avatar-safe settings. Shape keys preserved, no leaf bones, textures embedded, Unity-friendly scale, and a warning when you are over 70k triangles.
+### Bringing Models Home (Import & Export)
+* **Import Model:** One cute button for every supported format! We handle PMX and PMD through the official MMD Tools extension, VRM through the VRM add-on, and FBX, glTF, OBJ, STL, and Collada through Blender's cozy built-in importers. The imported armature gets selected automatically for you!
+* **Install MMD Tools:** One click beautifully installs the official MMD Tools straight from extensions.blender.org (always keeping you up to date without bundling forks!).
+* **Export Model:** Flawless FBX export with avatar-safe settings. We preserve your shape keys, sweep away leaf bones, embed textures, ensure Unity-friendly scale, and gently warn you if your model is over 70k triangles.
 
-### Fix Model in one click
+### The Magic Wand (Fix Model in One Click)
+* Translates Japanese bone, shape key, material, and object names. Completely offline using a curated, private dictionary with kana romanization fallback! (No Google Translate, no snooping telemetry.)
+* Tidies up and standardizes bone names from MMD, VRoid, Mixamo, Source Engine, and generic FBX rigs into the community-standard scheme (Hips, Spine, Left arm, Eye_L, etc.).
+* Rebuilds a clean, gorgeous Hips, Spine, Chest, Neck, and Head hierarchy, and fixes those tricky hips.
+* Sweeps away zero-weight junk bones and merges their weights upward.
+* Clears out messy MMD rigid bodies, joints, and bone constraints.
+* Applies transforms, normalizes your armature modifiers, and neatly joins meshes into a single, perfect `Body` mesh.
 
-- Translates Japanese bone, shape key, material, and object names. Fully offline, using a curated dictionary with kana romanization fallback. No Google Translate, no telemetry.
-- Standardizes bone names from MMD, VRoid, Mixamo, Source Engine, and generic FBX rigs to the community-standard scheme (Hips, Spine, Left arm, Eye_L, and so on).
-- Rebuilds a clean Hips, Spine, Chest, Neck, Head hierarchy and fixes the hips bone.
-- Deletes zero-weight junk bones and merges their weights upward.
-- Removes MMD rigid bodies, joints, and bone constraints.
-- Applies transforms, normalizes armature modifiers, and joins meshes into a single Body mesh.
+### Skeleton & Armature Spa
+* **Attach Mesh (Auto Weights):** Parents any mesh to your armature and generates cozy automatic bone-heat weights in a single click.
+* **Remove End Bones:** Cleans up leftover end bones (`_end`, `_end_end`, `_End.001`) instantly, blending their weights beautifully into the parents.
+* **Merge Weights to Parent:** Works on any selected bones in both edit and pose mode!
+* Plus tools to remove zero-weight bones, delete by pattern, and wipe all constraints.
 
-### Armature tools
+### Pose Boutique
+* Start and stop pose mode directly from the panel.
+* **Apply as Rest Pose:** A superpower that actually works on meshes with shape keys (which Blender can't do natively!).
+* **Store and Restore Pose:** Save your current pose and bring it back later! Perfect for checking weight painting or fixing clipping without losing your spot.
+* **Reset Pose:** Snaps the armature straight back to its bind pose without even needing to enter Pose Mode first.
 
-- Attach Mesh (Auto Weights): parents any mesh to the armature and generates automatic bone-heat weights in one click.
-- Remove End Bones: deletes leftover end bones (_end, _end_end, _End.001, and similar) in one click, merging their weights into the parents.
-- Merge Weights to Parent for any selected bones, in edit or pose mode.
-- Remove zero-weight bones, delete bones by pattern, remove all constraints.
+### Wardrobe & Perfect Fits (Clothing & Weights)
+* **Elastic Fit:** Gently pushes clothing meshes out of the body with a soft, elastic falloff. It’s UV and topology safe, and brings your shape keys along for the ride! Includes a per-region offset group for extra clearance, and a pin group for vertices that must stay perfectly still.
+* **Robust Weight Transfer:** Flawlessly transfers bone weights from the body to your cute outfits using confident surface matching, plus diffusion inpainting for tricky spots like armpits, chests, and between the legs. No manual smoothing needed! *(An original implementation of the brilliant SIGGRAPH Asia 2023 paper "Robust Skin Weights Transfer via Weight Inpainting".)*
 
-### Pose tools
-
-- Start and stop pose mode from the panel.
-- Apply as Rest Pose that also works on meshes with shape keys, which Blender cannot do natively.
-- Store and Restore Pose: save the current pose and bring it back later, useful for weight painting or clipping fixes without losing your place.
-- Reset Pose: resets the armature straight back to its bind pose, without needing to enter Pose Mode first.
-
-### Clothing and weights
-
-- Elastic Fit: pushes clothing meshes out of the body with an elastic falloff. UV and topology safe, and shape keys are carried along. Supports a per-region offset group for areas that need extra clearance and a pin group for vertices that must never move.
-- Robust Weight Transfer: transfers bone weights from the body to clothing using confident surface matching plus diffusion inpainting for uncertain areas such as armpits, chest, and between the legs. No manual weight smoothing needed. Original implementation of the SIGGRAPH Asia 2023 paper "Robust Skin Weights Transfer via Weight Inpainting" (Abdrashitov et al.).
-
-### Blendshape transfer
-
-- Transfers every shape key from a source mesh to a target mesh, even across completely different topology. Pick the Source and Target in the Blendshape panel and click Transfer Blendshapes.
-- Pre-processing modifiers improve transfer quality: Subdivision Surface smooths the source so the transfer has more data to work with (1 to 2 levels is usually enough; higher levels get expensive on dense meshes), and Displace moves the source geometry along its normals to bring it closer to the target. Both have a preview toggle that shows their effect on the source mesh in the viewport.
-- Paintable transfer mask: red areas transfer fully, blue areas not at all. Click Draw Transfer Mask to paint, click again to finish, with Reset and Invert buttons for quick changes.
+### Blendshape Kisses (Transfer)
+* Copies every shape key from a source mesh to a target mesh, even if they have totally different topologies! Just pick your Source and Target and click **Transfer Blendshapes**.
+* **Pre-processing modifiers** make the transfer so much prettier: Subdivision Surface smooths the source for better data, and Displace moves the source geometry along its normals to hug the target. Both have cute viewport toggles!
+* **Paintable transfer mask:** Paint red where you want the transfer, and blue where you don't. Includes quick Draw, Reset, and Invert buttons for effortless touch-ups.
 
 ### Blendshape Sync
+* Magically keeps the exact same shape key active by name across your active object, an Auxiliary object, and every selected mesh! It even pops you into a focused Sculpt Mode session to edit it perfectly. See [docs/blendshape-sync.md](docs/blendshape-sync.md).
 
-- Keeps the same shape key active by name across the active object, an Auxiliary object, and every selected mesh, and jumps into a focused Sculpt Mode session for editing it. See [docs/blendshape-sync.md](docs/blendshape-sync.md).
+### Sweet Visemes
+* Generates your 15 standard `vrc.v_*` visemes directly from your basic A, O, and CH mouth shapes, complete with adjustable intensity!
 
-### Visemes
+### Bright Eyes (Eye Tracking)
+* Sets up your `Eye_L` and `Eye_R` bones for modern, bone-based eye tracking! Handles the renaming, Head parenting, and upright orientation, plus handy buttons to test and reset rotation.
 
-- Generates the 15 standard vrc.v_* visemes from your A, O, and CH mouth shapes, with adjustable intensity.
+### Gentle Decimation
+* A global triangle budget distributed proportionally and beautifully across your meshes.
+* **Safe mode** promises never to touch your precious meshes that have shape keys. (Selected and Full modes are there if you're feeling brave!)
 
-### Eye tracking
+### Shape Key Sculpting
+* **Smooth Shape Keys:** Relaxes your shape key deltas to fix crunchy or jagged deformations. Comes with adjustable strength, an optional vertex mask, and safe little backup copies!
+* **Apply shape key to basis:** Merges a shape key into your base mesh, keeping a reverted key just in case you change your mind.
+* Removes empty shape keys and sweetly sorts your visemes to the very top.
+* **Shapekey Batch Creator:** Paste a list of names to instantly generate empty shape keys across all selected meshes! Includes a clickable, paginated list for browsing massive sets. See [docs/shapekey-batch-creator.md](docs/shapekey-batch-creator.md).
 
-- Sets up Eye_L and Eye_R bones for modern bone-based eye tracking: renaming, Head parenting, upright orientation, plus test and reset rotation buttons.
+### Mesh & Material Makeovers
+* Join and separate meshes gracefully, with shape-key-aware merge doubles.
+* Merge those pesky duplicate `.001` materials and sweep away unused material slots.
+* **Vertex Error Selector:** Paste Unity unweighted-vertex error numbers and it will select *exactly* those vertices in Edit Mode for you! See [docs/vertex-error-selector.md](docs/vertex-error-selector.md).
 
-### Decimation
+### Perfect Alignment
+* **Vertex/Face Alignment:** Aligns selected objects perfectly to a vertex or face center that you pick on the active object. See [docs/vertex-face-alignment.md](docs/vertex-face-alignment.md).
 
-- Global triangle budget distributed proportionally across meshes.
-- Safe mode never touches meshes with shape keys. Selected and Full modes are available when you need them.
+### The Avatar Analyzer (Beauty Check)
+* Scores your avatar against VRChat's official performance ranks (polygons, materials, bones, texture memory) for both PC and Quest! Gives you a lovely little JSON report and highlights heavy meshes and texture hotspots.
+* **Creator tools:** Texture Optimizer (power-of-two aware resizing with backups), Mesh Heatmap (to see where your geometry is dense), Auto Fix Avatar (a one-click texture and decimation pass with undo!), Restore Texture backups, and a scene-wide Batch Report. See [docs/avatar-analyzer.md](docs/avatar-analyzer.md).
 
-### Shape keys
+---
 
-- Smooth Shape Keys: relaxes shape key deltas to fix jagged or crunchy deformation, with adjustable strength, an optional vertex mask, and optional backup copies of the originals.
-- Apply shape key to basis, with a reverted key kept for toggling back.
-- Remove empty shape keys, sort visemes to the top of the list.
-- Shapekey Batch Creator: paste a comma-separated list of names to generate empty shape keys across every selected mesh, plus a paginated, clickable list for browsing large shape key sets. See [docs/shapekey-batch-creator.md](docs/shapekey-batch-creator.md).
-
-### Mesh and materials
-
-- Join and separate meshes, shape-key-aware merge doubles.
-- Merge duplicate .001-style materials, remove unused material slots.
-- Vertex Error Selector: paste the vertex index numbers from a Unity unweighted-vertex error and select exactly those vertices in Edit Mode. See [docs/vertex-error-selector.md](docs/vertex-error-selector.md).
-
-### Align tools
-
-- Vertex/Face Alignment: aligns the selected objects to a vertex or face center picked on the active object in Edit Mode. See [docs/vertex-face-alignment.md](docs/vertex-face-alignment.md).
-
-### Avatar Analyzer
-
-- Scores an avatar against VRChat's published performance rank thresholds (polygons, materials, mesh counts, bones, texture memory) for PC or Quest, with heavy-mesh and texture-hotspot breakdowns and a JSON report export.
-- Creator tools: Texture Optimizer (resize to a target size, power-of-two aware, with backup), Mesh Heatmap (visualize dense geometry), Auto Fix Avatar (one-click texture and decimation pass with undo), Restore Texture Size Backup, and a scene-wide Batch Report. See [docs/avatar-analyzer.md](docs/avatar-analyzer.md).
-
-## Comparison with Cats
+## Cats vs. Ari's Toolkit
 
 | | Cats Blender Plugin | Ari's Avatar Toolkit |
 |---|---|---|
-| Blender support | 2.79 to 3.6 (abandoned) | 5.2 LTS |
-| Packaging | Legacy add-on (bl_info) | Blender Extension (blender_manifest.toml) |
-| Translation | Google Translate (online) | Offline dictionary, private and deterministic |
-| Importers | Bundled forks of mmd_tools and others | One-click import through official importers, auto-installs MMD Tools |
-| Eye tracking | Legacy shape-key based | Modern bone-based |
-| Clothing tools | None | Elastic fit and robust weight transfer |
-| Codebase | Ten years of accumulated patches | Clean, modular Python |
+| **Blender Support** | 2.79 to 3.6 (abandoned) | 5.2 LTS (Modern & Fresh!) |
+| **Packaging** | Legacy add-on (`bl_info`) | Blender Extension (`blender_manifest.toml`) |
+| **Translation** | Google Translate (online) | Offline dictionary, private & cozy |
+| **Importers** | Bundled forks of mmd_tools | One-click official import, auto-installs MMD Tools |
+| **Eye Tracking** | Legacy shape-key based | Modern bone-based |
+| **Clothing Tools**| None | Elastic fit & robust weight transfer |
+| **Codebase** | 10 years of patched code | Clean, modular Python magic |
 
-## Installation
+---
 
-1. Download the latest ari_avatar_toolkit zip from the [Releases](https://github.com/yoisthatari/Ari-s-Avatar-Toolkit/releases) page.
-2. In Blender 5.2, open Edit, Preferences, Get Extensions, click the dropdown arrow in the top right corner, and choose Install from Disk. Pick the zip.
-3. The panel appears in the 3D View sidebar (N key) under Ari's Toolkit.
+## How to Install Your Toolkit
 
-## Quick start
+1. Download the latest `ari_avatar_toolkit` zip from our sparkling [Releases](https://github.com/yoisthatari/Ari-s-Avatar-Toolkit/releases) page.
+2. In Blender 5.2, open **Edit > Preferences > Get Extensions**. Click the little dropdown arrow in the top right corner, and choose **Install from Disk**. Pick your downloaded zip!
+3. Ta-da! The panel will magically appear in your 3D View sidebar (press the `N` key) under **Ari's Toolkit**.
 
-1. Click Import Model and pick your file. For PMX models, click Install MMD Tools first if you have not already.
-2. Click Fix Model. The armature is picked automatically if there is only one.
-3. Set up Visemes and Eye Tracking.
-4. Fit clothing and transfer weights from the Clothing and Weights panel if you are assembling an outfit.
-5. Decimate if you are over your target platform's polygon budget.
-6. Click Export Model and bring the FBX into Unity.
+---
 
-## Documentation
+## Quick Start Guide
 
-Step by step usage guides for individual features live in [docs](docs):
+1. Click **Import Model** and pick your file. (If it's a PMX model, just click **Install MMD Tools** first if you haven't yet!)
+2. Click **Fix Model**. The toolkit will auto-select your armature if there's only one.
+3. Set up your **Visemes** and **Eye Tracking**.
+4. Fitting an outfit? Use the Clothing and Weights panel to fit clothing and beautifully transfer your weights.
+5. Hit **Decimate** if you're a little over your target platform's polygon budget.
+6. Click **Export Model** and bring your gorgeous new FBX right into Unity!
+
+---
+
+## The Library (Docs)
+
+Need a little more help? Step-by-step guides for our special features live happily in the [docs](docs) folder:
 
 - [Blendshape Transfer](docs/blendshape-transfer.md)
 - [Vertex/Face Alignment](docs/vertex-face-alignment.md)
@@ -125,20 +121,11 @@ Step by step usage guides for individual features live in [docs](docs):
 - [Shapekey Batch Creator](docs/shapekey-batch-creator.md)
 - [Vertex Error Selector](docs/vertex-error-selector.md)
 
-## Building from source
+---
 
-Run from the repository root:
+## Baking from Source
 
-```
+Want to build it yourself? Run this from the repository root:
+
+```bash
 blender --command extension build
-```
-
-The zip is written next to the manifest.
-
-## License
-
-Source available, no derivatives, no redistribution. See [LICENSE.md](LICENSE.md). This add-on is distributed only through this repository and its Releases page, not on the Blender Extensions Platform.
-
-Cats Blender Plugin is a separate project (MIT licensed) and no code from it is used here. The feature set and workflow are modeled after it. Thanks to its authors for a decade of avatar tooling.
-
-The weight transfer feature is an independent implementation of "Robust Skin Weights Transfer via Weight Inpainting" by Rinat Abdrashitov, Kim Raichstat, Jared Monsen, and David Hill (SIGGRAPH Asia 2023). Please cite the paper when using it in academic work.
