@@ -74,6 +74,11 @@ Source available: you can read the code and use the add-on freely, including for
 
 - Vertex/Face Alignment: aligns the selected objects to a vertex or face center picked on the active object in Edit Mode. See [docs/vertex-face-alignment.md](docs/vertex-face-alignment.md).
 
+### Avatar Analyzer
+
+- Scores an avatar against VRChat's published performance rank thresholds (polygons, materials, mesh counts, bones, texture memory) for PC or Quest, with heavy-mesh and texture-hotspot breakdowns and a JSON report export.
+- Creator tools: Texture Optimizer (resize to a target size, power-of-two aware, with backup), Mesh Heatmap (visualize dense geometry), Auto Fix Avatar (one-click texture and decimation pass with undo), Restore Texture Size Backup, and a scene-wide Batch Report. See [docs/avatar-analyzer.md](docs/avatar-analyzer.md).
+
 ## Comparison with Cats
 
 | | Cats Blender Plugin | Ari's Avatar Toolkit |
@@ -107,6 +112,7 @@ Step by step usage guides for individual features live in [docs](docs):
 
 - [Blendshape Transfer](docs/blendshape-transfer.md)
 - [Vertex/Face Alignment](docs/vertex-face-alignment.md)
+- [Avatar Analyzer](docs/avatar-analyzer.md)
 
 ## Building from source
 

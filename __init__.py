@@ -3,6 +3,7 @@ from .core import properties
 from .operators import (
     align_tools,
     armature_ops,
+    avatar_analyzer,
     blendshape_transfer,
     clothing_fit,
     decimation,
@@ -36,6 +37,7 @@ _MODULES = (
     decimation,
     translate_ops,
     align_tools,
+    avatar_analyzer,
     panels,
 )
 

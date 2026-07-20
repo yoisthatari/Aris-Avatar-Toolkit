@@ -28,6 +28,11 @@
 - Vertex/Face Alignment: aligns the selected objects to a vertex or face
   center picked on the active object in edit mode, with a new Align Tools
   panel
+- Avatar Analyzer: scores an avatar against VRChat's PC and Quest
+  performance rank thresholds, with heavy-mesh and texture-hotspot
+  reports, a JSON export, and creator tools (Texture Optimizer, Mesh
+  Heatmap, Auto Fix Avatar with undo, Restore Texture Size Backup,
+  scene-wide Batch Report)
 
 ## 1.0.0 (2026-07-19)
 

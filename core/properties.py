@@ -80,6 +80,18 @@ def _right_eye_items(self, context):
     return _bone_items(context, "eye_right")
 
 
+def _armature_items(self, context):
+    items: list[tuple[str, str, str]] = [
+        (obj.name, obj.name, "Armature")
+        for obj in context.scene.objects
+        if obj.type == 'ARMATURE'
+    ]
+    if not items:
+        items = [("NONE", "No armatures found", "No armature objects in the scene")]
+    _enum_cache["analyzer_armature"] = items
+    return items
+
+
 class AATSettings(PropertyGroup):
     armature: PointerProperty(
         name="Armature",
@@ -342,6 +354,44 @@ class AATSettings(PropertyGroup):
         min=0.0,
         max=0.1,
         precision=4,
+    )
+
+    analyzer_armature: EnumProperty(
+        name="Scope",
+        description="Armature to analyze",
+        items=_armature_items,
+    )
+    analyzer_platform: EnumProperty(
+        name="Target",
+        description="Platform to compare the avatar against",
+        items=(
+            ('PC', "PC", "VRChat PC performance rank thresholds"),
+            ('QUEST', "Quest", "VRChat Quest performance rank thresholds"),
+        ),
+        default='PC',
+    )
+    analyzer_max_texture: EnumProperty(
+        name="Max Texture",
+        description="Target texture size for Texture Optimizer and Auto Fix Avatar",
+        items=(
+            ('256', "256", "256x256"),
+            ('512', "512", "512x512"),
+            ('1024', "1024", "1024x1024"),
+            ('2048', "2048", "2048x2048"),
+            ('4096', "4096", "4096x4096"),
+            ('8192', "8192", "8192x8192"),
+        ),
+        default='2048',
+    )
+    analyzer_force_pot: BoolProperty(
+        name="Force Power-of-Two",
+        description="Round resized textures down to the nearest power-of-two size",
+        default=True,
+    )
+    analyzer_auto_decimate: BoolProperty(
+        name="Auto Add Decimate",
+        description="Auto Fix Avatar adds non-destructive Decimate modifiers to heavy meshes",
+        default=False,
     )
 
 
