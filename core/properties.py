@@ -80,6 +80,16 @@ def _right_eye_items(self, context):
     return _bone_items(context, "eye_right")
 
 
+def _active_shapekey_items(self, context):
+    obj = context.active_object
+    items: list[tuple[str, str, str]] = [("NONE", "None", "No shape key selected")]
+    if obj is not None and common.has_shapekeys(obj):
+        for kb in obj.data.shape_keys.key_blocks[1:]:
+            items.append((kb.name, kb.name, "Shape key"))
+    _enum_cache["sync_shapekey"] = items
+    return items
+
+
 def _armature_items(self, context):
     items: list[tuple[str, str, str]] = [
         (obj.name, obj.name, "Armature")
@@ -392,6 +402,18 @@ class AATSettings(PropertyGroup):
         name="Auto Add Decimate",
         description="Auto Fix Avatar adds non-destructive Decimate modifiers to heavy meshes",
         default=False,
+    )
+
+    sync_auxiliary: PointerProperty(
+        name="Auxiliary",
+        description="Optional second object kept in sync with the active object (e.g. teeth or eyelashes)",
+        type=bpy.types.Object,
+        poll=_poll_mesh,
+    )
+    sync_shapekey: EnumProperty(
+        name="Shape Key",
+        description="Shape key to sync, sculpt, or reset, taken from the active object",
+        items=_active_shapekey_items,
     )
 
 
