@@ -12,9 +12,8 @@ class AAT_OT_select_error_vertices(Operator):
     bl_idname = "aat.select_error_vertices"
     bl_label = "Select Error Vertices"
     bl_description = (
-        "Selects exactly the pasted vertex index numbers on the active mesh "
-        "and pops into Edit Mode, so you can fix a Unity unweighted-vertex "
-        "error in a snap"
+        "Select the pasted vertex index numbers on the active mesh and enter "
+        "Edit Mode, so you can fix a Unity unweighted-vertex error"
     )
     bl_options = {'REGISTER', 'UNDO'}
 

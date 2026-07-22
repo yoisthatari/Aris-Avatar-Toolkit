@@ -416,27 +416,6 @@ class AATSettings(PropertyGroup):
         items=_active_shapekey_items,
     )
 
-    batch_shapekey_names: StringProperty(
-        name="Names",
-        description="Comma-separated shape key names to create, e.g. 'Smile, Frown, Angry'",
-        default="",
-    )
-    batch_page: IntProperty(
-        name="Page",
-        default=0,
-        min=0,
-    )
-    batch_expanded: BoolProperty(
-        name="Show Shape Key List",
-        default=False,
-    )
-
-    vertex_error_input: StringProperty(
-        name="Vertex Indices",
-        description="Paste the vertex index numbers from a Unity unweighted-vertex error message",
-        default="",
-    )
-
 
 _CLASSES = (AATSettings,)
 

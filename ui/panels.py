@@ -4,7 +4,7 @@ import bpy
 from bpy.types import Context, Panel
 
 from ..core import common
-from ..operators import avatar_analyzer, import_export, shapekey_ops
+from ..operators import avatar_analyzer, import_export
 
 CATEGORY = "Ari's Toolkit"
 
@@ -17,7 +17,7 @@ class _BasePanel:
 
 class AAT_PT_main(_BasePanel, Panel):
     bl_idname = "AAT_PT_main"
-    bl_label = "Avatar Home"
+    bl_label = "Model"
 
     def draw(self, context: Context) -> None:
         layout = self.layout
@@ -36,7 +36,7 @@ class AAT_PT_main(_BasePanel, Panel):
         armature = common.get_armature(context)
         if armature is None:
             box = layout.box()
-            box.label(text="No armature here yet", icon='INFO')
+            box.label(text="No armature in the scene", icon='INFO')
             box.label(text="Import a model to get started")
             return
 
@@ -52,16 +52,11 @@ class AAT_PT_main(_BasePanel, Panel):
             row.operator("aat.start_pose_mode", icon='POSE_HLT')
         layout.operator("aat.apply_as_rest_pose", icon='ARMATURE_DATA')
 
-        row = layout.row(align=True)
-        row.operator("aat.store_pose", text="Store", icon='KEYFRAME')
-        row.operator("aat.restore_pose", text="Restore", icon='LOOP_BACK')
-        row.operator("aat.reset_pose", text="Reset", icon='X')
-
 
 class AAT_PT_fix_options(_BasePanel, Panel):
     bl_idname = "AAT_PT_fix_options"
     bl_parent_id = "AAT_PT_main"
-    bl_label = "Magic Wand Options"
+    bl_label = "Fix Model Options"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -83,7 +78,7 @@ class AAT_PT_fix_options(_BasePanel, Panel):
 
 class AAT_PT_translation(_BasePanel, Panel):
     bl_idname = "AAT_PT_translation"
-    bl_label = "Translation Magic"
+    bl_label = "Translation"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -102,7 +97,7 @@ class AAT_PT_translation(_BasePanel, Panel):
 
 class AAT_PT_armature_tools(_BasePanel, Panel):
     bl_idname = "AAT_PT_armature_tools"
-    bl_label = "Armature Spa"
+    bl_label = "Armature"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -121,7 +116,7 @@ class AAT_PT_armature_tools(_BasePanel, Panel):
 
 class AAT_PT_visemes(_BasePanel, Panel):
     bl_idname = "AAT_PT_visemes"
-    bl_label = "Sweet Visemes"
+    bl_label = "Visemes"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -140,7 +135,7 @@ class AAT_PT_visemes(_BasePanel, Panel):
 
 class AAT_PT_eye_tracking(_BasePanel, Panel):
     bl_idname = "AAT_PT_eye_tracking"
-    bl_label = "Bright Eyes"
+    bl_label = "Eye Tracking"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -160,7 +155,7 @@ class AAT_PT_eye_tracking(_BasePanel, Panel):
 
 class AAT_PT_clothing(_BasePanel, Panel):
     bl_idname = "AAT_PT_clothing"
-    bl_label = "Wardrobe & Fits"
+    bl_label = "Clothing & Weights"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -195,7 +190,7 @@ class AAT_PT_clothing(_BasePanel, Panel):
 
 class AAT_PT_decimation(_BasePanel, Panel):
     bl_idname = "AAT_PT_decimation"
-    bl_label = "Gentle Decimation"
+    bl_label = "Decimation"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -220,7 +215,7 @@ class AAT_PT_decimation(_BasePanel, Panel):
 
 class AAT_PT_blendshape(_BasePanel, Panel):
     bl_idname = "AAT_PT_blendshape"
-    bl_label = "Blendshape Kisses"
+    bl_label = "Blendshape"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -287,47 +282,21 @@ class AAT_PT_blendshape_sync(_BasePanel, Panel):
 
 class AAT_PT_shapekeys(_BasePanel, Panel):
     bl_idname = "AAT_PT_shapekeys"
-    bl_label = "Shape Key Sculpting"
+    bl_label = "Shape Keys"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
         layout = self.layout
-        settings = context.scene.aat
         col = layout.column(align=True)
         col.operator("aat.shapekey_to_basis", icon='SHAPEKEY_DATA')
         col.operator("aat.smooth_shapekeys", icon='MOD_SMOOTH')
         col.operator("aat.remove_empty_shapekeys", icon='TRASH')
         col.operator("aat.sort_shapekeys", icon='SORTALPHA')
 
-        box = layout.box()
-        box.label(text="Batch Creator", icon='PRESET_NEW')
-        box.prop(settings, "batch_shapekey_names", text="")
-        box.operator("aat.batch_create_shapekeys", icon='ADD')
-
-        obj = context.active_object
-        if obj is not None and common.has_shapekeys(obj):
-            header = box.row()
-            icon = 'TRIA_DOWN' if settings.batch_expanded else 'TRIA_RIGHT'
-            header.prop(settings, "batch_expanded", text="Shape Key List", icon=icon, emboss=False)
-            if settings.batch_expanded:
-                names = [kb.name for kb in obj.data.shape_keys.key_blocks[1:]]
-                page_size = shapekey_ops.PAGE_SIZE
-                max_page = max((len(names) - 1) // page_size, 0)
-                page = min(settings.batch_page, max_page)
-                start = page * page_size
-                for offset, name in enumerate(names[start:start + page_size]):
-                    row = box.row(align=True)
-                    op = row.operator("aat.batch_jump_to_shapekey", text=name, icon='SHAPEKEY_DATA')
-                    op.index = start + offset + 1
-                nav = box.row(align=True)
-                nav.operator("aat.batch_page_prev", text="<")
-                nav.label(text=f"Page {page + 1} / {max_page + 1}")
-                nav.operator("aat.batch_page_next", text=">")
-
 
 class AAT_PT_mesh_materials(_BasePanel, Panel):
     bl_idname = "AAT_PT_mesh_materials"
-    bl_label = "Mesh & Material Makeovers"
+    bl_label = "Mesh & Materials"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -343,22 +312,9 @@ class AAT_PT_mesh_materials(_BasePanel, Panel):
         col.operator("aat.remove_unused_material_slots", icon='NODE_MATERIAL')
 
 
-class AAT_PT_vertex_tools(_BasePanel, Panel):
-    bl_idname = "AAT_PT_vertex_tools"
-    bl_label = "Vertex Rescue"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context: Context) -> None:
-        layout = self.layout
-        settings = context.scene.aat
-        layout.label(text="Paste vertex indices from a Unity error message", icon='INFO')
-        layout.prop(settings, "vertex_error_input", text="")
-        layout.operator("aat.select_error_vertices", icon='VIEWZOOM')
-
-
 class AAT_PT_align_tools(_BasePanel, Panel):
     bl_idname = "AAT_PT_align_tools"
-    bl_label = "Perfect Alignment"
+    bl_label = "Align Tools"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -373,13 +329,13 @@ def _rank_icon(rank: str) -> str:
 
 class AAT_PT_avatar_analyzer(_BasePanel, Panel):
     bl_idname = "AAT_PT_avatar_analyzer"
-    bl_label = "Beauty Check"
+    bl_label = "Avatar Analyzer"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
         layout = self.layout
         settings = context.scene.aat
-        layout.label(text="Scores your avatar against VRChat's official performance ranks", icon='INFO')
+        layout.label(text="Scores the avatar against VRChat's performance ranks", icon='INFO')
         layout.prop(settings, "analyzer_armature")
         layout.prop(settings, "analyzer_platform")
         row = layout.row(align=True)
@@ -391,7 +347,7 @@ class AAT_PT_avatar_analyzer(_BasePanel, Panel):
 class AAT_PT_analyzer_tools(_BasePanel, Panel):
     bl_idname = "AAT_PT_analyzer_tools"
     bl_parent_id = "AAT_PT_avatar_analyzer"
-    bl_label = "Vanity Table"
+    bl_label = "Creator Tools"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
@@ -423,7 +379,7 @@ class AAT_PT_analyzer_results(_BasePanel, Panel):
         layout = self.layout
         result = avatar_analyzer.get_last_result()
         if result is None:
-            layout.label(text="Click Analyze Avatar to see your results", icon='INFO')
+            layout.label(text="Click Analyze Avatar to see results", icon='INFO')
         else:
             box = layout.box()
             box.label(
@@ -479,14 +435,14 @@ class AAT_PT_analyzer_results(_BasePanel, Panel):
 
 class AAT_PT_credits(_BasePanel, Panel):
     bl_idname = "AAT_PT_credits"
-    bl_label = "With Love"
+    bl_label = "Info"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context: Context) -> None:
         layout = self.layout
         col = layout.column(align=True)
-        col.label(text="Ari's Avatar Toolkit 1.1.0", icon='HEART')
-        col.label(text="Made with love for Blender 5.2 LTS")
+        col.label(text="Ari's Avatar Toolkit 1.1.0")
+        col.label(text="Made for Blender 5.2 LTS")
         op = layout.operator("wm.url_open", text="GitHub", icon='URL')
         op.url = "https://github.com/yoisthatari/Ari-s-Avatar-Toolkit"
 
@@ -504,7 +460,6 @@ _CLASSES = (
     AAT_PT_blendshape_sync,
     AAT_PT_shapekeys,
     AAT_PT_mesh_materials,
-    AAT_PT_vertex_tools,
     AAT_PT_align_tools,
     AAT_PT_avatar_analyzer,
     AAT_PT_analyzer_tools,

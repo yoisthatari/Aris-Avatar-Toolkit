@@ -36,13 +36,6 @@
 - Blendshape Sync: keeps a shape key active by name across the active
   object, an Auxiliary object, and every selected mesh, with a Quick
   Sculpt Mode shortcut and an instant reset
-- Shapekey Batch Creator: paste a comma-separated list of names to
-  generate empty shape keys across every selected mesh, with a
-  paginated, clickable shape key list
-- Vertex Error Selector: paste vertex index numbers from a Unity
-  unweighted-vertex error to select exactly those vertices in Edit Mode
-- Rigging tools: Store, Restore, and Reset Pose, for weight painting and
-  clipping fixes without losing your place
 
 ## 1.0.0 (2026-07-19)
 
