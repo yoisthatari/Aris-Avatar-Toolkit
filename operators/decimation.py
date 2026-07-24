@@ -102,7 +102,150 @@ class AAT_OT_decimate(Operator):
         common.apply_modifier(context, mesh, modifier.name)
 
 
-_CLASSES = (AAT_OT_decimate,)
+class AAT_OT_quad_remesh(Operator):
+    bl_idname = "aat.quad_remesh"
+    bl_label = "Quad Remesh"
+    bl_description = (
+        "Retopologise the selected meshes into clean, flowing quads using "
+        "Blender's built-in QuadriFlow field-aligned remesher. Bone weights are "
+        "transferred back onto the new topology with the robust inpainting "
+        "method, so your model still deforms beautifully. Shape keys cannot "
+        "survive a remesh, so meshes that have them are skipped unless you say "
+        "otherwise"
+    )
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        return any(obj.type == 'MESH' for obj in context.selected_objects)
+
+    def execute(self, context: Context):
+        from . import weight_transfer
+
+        settings = context.scene.aat
+        targets = [obj for obj in context.selected_objects if obj.type == 'MESH']
+        if not targets:
+            self.report({'ERROR'}, "Select the meshes to remesh")
+            return {'CANCELLED'}
+
+        common.ensure_object_mode(context)
+        armature = common.get_armature(context)
+
+        skipped: list[str] = []
+        failed: list[str] = []
+        lost_shapekeys: list[str] = []
+        before_tris = 0
+        after_tris = 0
+        done = 0
+
+        for mesh in targets:
+            if common.has_shapekeys(mesh) and not settings.remesh_force_shapekeys:
+                skipped.append(mesh.name)
+                continue
+
+            before_tris += common.triangle_count(mesh)
+            source = None
+            if settings.remesh_transfer_weights and mesh.vertex_groups:
+                source = mesh.copy()
+                source.data = mesh.data.copy()
+                context.collection.objects.link(source)
+                source.matrix_world = mesh.matrix_world.copy()
+
+            if common.has_shapekeys(mesh):
+                lost_shapekeys.append(mesh.name)
+            if mesh.data.shape_keys is not None:
+                common.set_active(context, mesh)
+                bpy.ops.object.shape_key_remove(all=True, apply_mix=False)
+
+            common.set_active(context, mesh)
+            try:
+                if settings.remesh_mode == 'RATIO':
+                    bpy.ops.object.quadriflow_remesh(
+                        mode='RATIO',
+                        target_ratio=settings.remesh_ratio,
+                        use_mesh_symmetry=settings.remesh_symmetry,
+                        use_preserve_sharp=settings.remesh_preserve_sharp,
+                        use_preserve_boundary=settings.remesh_preserve_boundary,
+                        preserve_attributes=True,
+                        smooth_normals=settings.remesh_smooth_normals,
+                    )
+                else:
+                    bpy.ops.object.quadriflow_remesh(
+                        mode='FACES',
+                        target_faces=settings.remesh_target_faces,
+                        use_mesh_symmetry=settings.remesh_symmetry,
+                        use_preserve_sharp=settings.remesh_preserve_sharp,
+                        use_preserve_boundary=settings.remesh_preserve_boundary,
+                        preserve_attributes=True,
+                        smooth_normals=settings.remesh_smooth_normals,
+                    )
+            except RuntimeError as exc:
+                failed.append(f"{mesh.name} ({exc})")
+                if source is not None:
+                    source_data = source.data
+                    bpy.data.objects.remove(source, do_unlink=True)
+                    bpy.data.meshes.remove(source_data)
+                continue
+
+            if source is not None:
+                weight_transfer.transfer_weights(
+                    context,
+                    source,
+                    [mesh],
+                    max_distance=settings.wt_max_distance,
+                    max_angle=settings.wt_max_angle,
+                    smooth_iterations=settings.wt_smooth_iterations,
+                    armature=armature,
+                )
+                source_data = source.data
+                bpy.data.objects.remove(source, do_unlink=True)
+                bpy.data.meshes.remove(source_data)
+
+            if armature is not None and not any(
+                m.type == 'ARMATURE' and m.object == armature for m in mesh.modifiers
+            ):
+                modifier = mesh.modifiers.new(name="Armature", type='ARMATURE')
+                modifier.object = armature
+
+            after_tris += common.triangle_count(mesh)
+            done += 1
+
+        if done == 0:
+            if skipped:
+                self.report(
+                    {'ERROR'},
+                    f"Every mesh has shape keys, so nothing was remeshed. Enable "
+                    f"Remesh Shape Key Meshes to go ahead anyway: {', '.join(skipped[:3])}",
+                )
+            elif failed:
+                self.report(
+                    {'ERROR'},
+                    "QuadriFlow could not remesh this. It needs clean, manifold "
+                    f"geometry: {failed[0]}",
+                )
+            else:
+                self.report({'ERROR'}, "Nothing was remeshed")
+            return {'CANCELLED'}
+
+        message = f"Remeshed {done} meshes to quads ({before_tris:,} to {after_tris:,} triangles)"
+        warnings = []
+        if lost_shapekeys:
+            warnings.append(f"shape keys lost on {', '.join(lost_shapekeys[:3])}")
+        if skipped:
+            warnings.append(f"{len(skipped)} skipped for shape keys")
+        if failed:
+            warnings.append(f"{len(failed)} failed")
+        if warnings:
+            self.report({'WARNING'}, message + ". " + "; ".join(warnings))
+        else:
+            self.report({'INFO'}, message)
+        return {'FINISHED'}
+
+
+_CLASSES = (
+    AAT_OT_decimate,
+    AAT_OT_quad_remesh,
+)
 
 
 def register() -> None:

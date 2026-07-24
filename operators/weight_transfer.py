@@ -24,6 +24,100 @@ def _source_weight_matrix(source, group_names):
     return matrix
 
 
+def transfer_weights(
+    context,
+    source,
+    targets,
+    *,
+    max_distance,
+    max_angle,
+    smooth_iterations,
+    armature=None,
+    bind_to_armature=True,
+):
+    if armature is not None:
+        group_names = [
+            vg.name for vg in source.vertex_groups
+            if vg.name in armature.data.bones
+        ]
+    else:
+        group_names = [vg.name for vg in source.vertex_groups]
+    if not group_names:
+        return 0, 0, 0
+
+    source_weights = _source_weight_matrix(source, group_names)
+    depsgraph = context.evaluated_depsgraph_get()
+    bvh = BVHTree.FromObject(source, depsgraph)
+    cos_limit = math.cos(math.radians(max_angle))
+    source_polys = source.data.polygons
+    source_verts = source.data.vertices
+    matched_total = 0
+    vertex_total = 0
+
+    for target in targets:
+        mesh = target.data
+        n = len(mesh.vertices)
+        vertex_total += n
+        to_source = source.matrix_world.inverted() @ target.matrix_world
+        normal_matrix = to_source.to_3x3()
+        weights = np.zeros((n, len(group_names)), dtype=np.float64)
+        known = np.zeros(n, dtype=bool)
+
+        for vertex in mesh.vertices:
+            co = to_source @ vertex.co
+            location, normal, face_index, distance = bvh.find_nearest(co)
+            if location is None:
+                continue
+            poly = source_polys[face_index]
+            indices = list(poly.vertices)
+            corner_weights = poly_3d_calc(
+                [source_verts[i].co for i in indices], location)
+            row = np.zeros(len(group_names), dtype=np.float64)
+            for i, cw in zip(indices, corner_weights):
+                row += source_weights[i] * cw
+            weights[vertex.index] = row
+            if distance <= max_distance:
+                vn = (normal_matrix @ vertex.normal).normalized()
+                if abs(vn.dot(normal)) >= cos_limit:
+                    known[vertex.index] = True
+
+        matched_total += int(known.sum())
+        unknown = ~known
+        if known.any() and unknown.any():
+            edges = common.edge_index_array(mesh)
+            fixed = weights[known].copy()
+            for _ in range(smooth_iterations):
+                averaged = common.neighbor_average(weights, edges, n)
+                weights[unknown] = averaged[unknown]
+                weights[known] = fixed
+
+        sums = weights.sum(axis=1)
+        positive = sums > 1e-8
+        weights[positive] /= sums[positive, None]
+
+        for name in group_names:
+            existing = target.vertex_groups.get(name)
+            if existing is not None:
+                target.vertex_groups.remove(existing)
+        for gi, name in enumerate(group_names):
+            column = weights[:, gi]
+            indices = np.nonzero(column > 0.0005)[0]
+            if len(indices) == 0:
+                continue
+            group = target.vertex_groups.new(name=name)
+            for i in indices:
+                group.add([int(i)], float(column[i]), 'REPLACE')
+
+        if bind_to_armature and armature and not any(
+            m.type == 'ARMATURE' and m.object == armature
+            for m in target.modifiers
+        ):
+            modifier = target.modifiers.new(name="Armature", type='ARMATURE')
+            modifier.object = armature
+
+    return matched_total, vertex_total, len(group_names)
+
+
 class AAT_OT_transfer_weights(Operator):
     bl_idname = "aat.transfer_weights"
     bl_label = "Transfer Weights"
@@ -55,88 +149,19 @@ class AAT_OT_transfer_weights(Operator):
             return {'CANCELLED'}
 
         armature = common.get_armature(context)
-        if armature:
-            group_names = [
-                vg.name for vg in source.vertex_groups
-                if vg.name in armature.data.bones
-            ]
-        else:
-            group_names = [vg.name for vg in source.vertex_groups]
-        if not group_names:
+        common.ensure_object_mode(context)
+        matched_total, vertex_total, group_count = transfer_weights(
+            context,
+            source,
+            targets,
+            max_distance=settings.wt_max_distance,
+            max_angle=settings.wt_max_angle,
+            smooth_iterations=settings.wt_smooth_iterations,
+            armature=armature,
+        )
+        if group_count == 0:
             self.report({'ERROR'}, "The body mesh has no bone weights to transfer")
             return {'CANCELLED'}
-
-        common.ensure_object_mode(context)
-        source_weights = _source_weight_matrix(source, group_names)
-        depsgraph = context.evaluated_depsgraph_get()
-        bvh = BVHTree.FromObject(source, depsgraph)
-        cos_limit = math.cos(math.radians(settings.wt_max_angle))
-        max_distance = settings.wt_max_distance
-        source_polys = source.data.polygons
-        source_verts = source.data.vertices
-        matched_total = 0
-        vertex_total = 0
-
-        for target in targets:
-            mesh = target.data
-            n = len(mesh.vertices)
-            vertex_total += n
-            to_source = source.matrix_world.inverted() @ target.matrix_world
-            normal_matrix = to_source.to_3x3()
-            weights = np.zeros((n, len(group_names)), dtype=np.float64)
-            known = np.zeros(n, dtype=bool)
-
-            for vertex in mesh.vertices:
-                co = to_source @ vertex.co
-                location, normal, face_index, distance = bvh.find_nearest(co)
-                if location is None:
-                    continue
-                poly = source_polys[face_index]
-                indices = list(poly.vertices)
-                corner_weights = poly_3d_calc(
-                    [source_verts[i].co for i in indices], location)
-                row = np.zeros(len(group_names), dtype=np.float64)
-                for i, cw in zip(indices, corner_weights):
-                    row += source_weights[i] * cw
-                weights[vertex.index] = row
-                if distance <= max_distance:
-                    vn = (normal_matrix @ vertex.normal).normalized()
-                    if abs(vn.dot(normal)) >= cos_limit:
-                        known[vertex.index] = True
-
-            matched_total += int(known.sum())
-            unknown = ~known
-            if known.any() and unknown.any():
-                edges = common.edge_index_array(mesh)
-                fixed = weights[known].copy()
-                for _ in range(settings.wt_smooth_iterations):
-                    averaged = common.neighbor_average(weights, edges, n)
-                    weights[unknown] = averaged[unknown]
-                    weights[known] = fixed
-
-            sums = weights.sum(axis=1)
-            positive = sums > 1e-8
-            weights[positive] /= sums[positive, None]
-
-            for name in group_names:
-                existing = target.vertex_groups.get(name)
-                if existing is not None:
-                    target.vertex_groups.remove(existing)
-            for gi, name in enumerate(group_names):
-                column = weights[:, gi]
-                indices = np.nonzero(column > 0.0005)[0]
-                if len(indices) == 0:
-                    continue
-                group = target.vertex_groups.new(name=name)
-                for i in indices:
-                    group.add([int(i)], float(column[i]), 'REPLACE')
-
-            if armature and not any(
-                m.type == 'ARMATURE' and m.object == armature
-                for m in target.modifiers
-            ):
-                modifier = target.modifiers.new(name="Armature", type='ARMATURE')
-                modifier.object = armature
 
         percent = (matched_total / vertex_total * 100.0) if vertex_total else 0.0
         self.report(

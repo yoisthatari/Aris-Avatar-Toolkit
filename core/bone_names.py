@@ -66,6 +66,17 @@ _SIDED_STANDARD = {
 
 _EYE_STANDARD = {_SIDE_LEFT: "Eye_L", _SIDE_RIGHT: "Eye_R"}
 
+_MIXAMO_BASES = {
+    "shoulder": "shoulder",
+    "arm": "arm",
+    "forearm": "elbow",
+    "hand": "wrist",
+    "upleg": "leg",
+    "leg": "knee",
+    "foot": "ankle",
+    "toebase": "toe",
+}
+
 
 def _normalize(name: str) -> str:
     text = name.strip().lower()
@@ -126,6 +137,12 @@ def standard_bone_name(name: str) -> str | None:
     finger = _match_finger(base, side)
     if finger:
         return finger
+
+    if name.strip().lower().startswith("mixamorig"):
+        mapped = _MIXAMO_BASES.get(base)
+        if mapped:
+            side_word = "Left" if side == _SIDE_LEFT else "Right"
+            return _SIDED_STANDARD[mapped].format(side=side_word)
 
     for pattern, standard in _SIDED_PATTERNS:
         if re.match(pattern, base):

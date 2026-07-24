@@ -34,7 +34,7 @@ def _vertex_group_weights(obj, name):
     return weights
 
 
-def _compute_push(bvh, to_body, to_cloth, mesh, offsets, pinned):
+def _compute_push(bvh, to_body, to_cloth, mesh, offsets, pinned, max_distance):
     n = len(mesh.vertices)
     deltas = np.zeros((n, 3), dtype=np.float64)
     moved = np.zeros(n, dtype=bool)
@@ -43,7 +43,7 @@ def _compute_push(bvh, to_body, to_cloth, mesh, offsets, pinned):
             continue
         offset = offsets[vertex.index]
         co = to_body @ vertex.co
-        location, normal, _face, _dist = bvh.find_nearest(co)
+        location, normal, _face, _dist = bvh.find_nearest(co, max_distance)
         if location is None:
             continue
         depth = (co - location).dot(normal)
@@ -90,6 +90,7 @@ class AAT_OT_fit_clothing(Operator):
         offset = settings.cloth_offset
         factor = settings.cloth_smooth_factor
         iterations = settings.cloth_smooth_iterations
+        max_distance = settings.cloth_max_distance
         total_moved = 0
 
         for cloth in targets:
@@ -102,8 +103,9 @@ class AAT_OT_fit_clothing(Operator):
                 cloth, settings.cloth_offset_group)
             pinned = _vertex_group_weights(cloth, settings.cloth_pin_group) > 0.5
 
-            for _ in range(2):
-                deltas, moved = _compute_push(bvh, to_body, to_cloth, mesh, offsets, pinned)
+            for _ in range(settings.cloth_passes):
+                deltas, moved = _compute_push(
+                    bvh, to_body, to_cloth, mesh, offsets, pinned, max_distance)
                 if not moved.any():
                     break
                 fixed = deltas[moved].copy()
@@ -115,7 +117,8 @@ class AAT_OT_fit_clothing(Operator):
                 _apply_deltas(cloth, deltas)
                 total_moved += int(moved.sum())
 
-            deltas, moved = _compute_push(bvh, to_body, to_cloth, mesh, offsets, pinned)
+            deltas, moved = _compute_push(
+                bvh, to_body, to_cloth, mesh, offsets, pinned, max_distance)
             if moved.any():
                 _apply_deltas(cloth, deltas)
 
@@ -129,7 +132,133 @@ class AAT_OT_fit_clothing(Operator):
         return {'FINISHED'}
 
 
-_CLASSES = (AAT_OT_fit_clothing,)
+_HIDE_GROUP = "AAT Under Clothing"
+_HIDE_MODIFIER = "AAT Hide Under Clothing"
+
+
+class AAT_OT_hide_body_under_clothing(Operator):
+    bl_idname = "aat.hide_body_under_clothing"
+    bl_label = "Hide Body Under Clothing"
+    bl_description = (
+        "Tucks away the body geometry hiding underneath the selected clothing, "
+        "so nothing pokes through and you save polygons. It uses a Mask "
+        "modifier, so it is completely reversible and your shape keys stay "
+        "perfectly intact"
+    )
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        settings = getattr(context.scene, "aat", None)
+        return settings is not None and settings.cloth_body_mesh != "NONE"
+
+    def execute(self, context: Context):
+        settings = context.scene.aat
+        body = bpy.data.objects.get(settings.cloth_body_mesh)
+        if body is None or body.type != 'MESH':
+            self.report({'ERROR'}, "Body mesh not found")
+            return {'CANCELLED'}
+        garments = [
+            obj for obj in context.selected_objects
+            if obj.type == 'MESH' and obj is not body
+        ]
+        if not garments:
+            self.report({'ERROR'}, "Select the clothing that should cover the body")
+            return {'CANCELLED'}
+
+        common.ensure_object_mode(context)
+        depsgraph = context.evaluated_depsgraph_get()
+        threshold = settings.cloth_hide_threshold
+        covered = np.zeros(len(body.data.vertices), dtype=bool)
+
+        for garment in garments:
+            bvh = BVHTree.FromObject(garment, depsgraph)
+            to_garment = garment.matrix_world.inverted() @ body.matrix_world
+            for vertex in body.data.vertices:
+                if covered[vertex.index]:
+                    continue
+                co = to_garment @ vertex.co
+                location, normal, _face, distance = bvh.find_nearest(co, threshold)
+                if location is None:
+                    continue
+                if (co - location).dot(normal) < 0.0:
+                    covered[vertex.index] = True
+
+        count = int(covered.sum())
+        group = body.vertex_groups.get(_HIDE_GROUP)
+        if group is not None:
+            body.vertex_groups.remove(group)
+
+        if count == 0:
+            modifier = body.modifiers.get(_HIDE_MODIFIER)
+            if modifier is not None:
+                body.modifiers.remove(modifier)
+            self.report(
+                {'WARNING'},
+                "No body geometry is sitting under that clothing. Try raising "
+                "the Hide Depth if the clothing floats further off the skin",
+            )
+            return {'CANCELLED'}
+
+        group = body.vertex_groups.new(name=_HIDE_GROUP)
+        for index in np.nonzero(covered)[0]:
+            group.add([int(index)], 1.0, 'REPLACE')
+
+        modifier = body.modifiers.get(_HIDE_MODIFIER)
+        if modifier is None or modifier.type != 'MASK':
+            if modifier is not None:
+                body.modifiers.remove(modifier)
+            modifier = body.modifiers.new(name=_HIDE_MODIFIER, type='MASK')
+        modifier.vertex_group = _HIDE_GROUP
+        modifier.invert_vertex_group = True
+        modifier.show_in_editmode = True
+
+        with context.temp_override(object=body, active_object=body, selected_objects=[body]):
+            bpy.ops.object.modifier_move_to_index(modifier=modifier.name, index=0)
+
+        percent = count / max(len(body.data.vertices), 1) * 100.0
+        self.report(
+            {'INFO'},
+            f"Hid {count:,} body vertices ({percent:.0f}%) under {len(garments)} garments",
+        )
+        return {'FINISHED'}
+
+
+class AAT_OT_show_body_under_clothing(Operator):
+    bl_idname = "aat.show_body_under_clothing"
+    bl_label = "Show Body Again"
+    bl_description = "Bring back every bit of body geometry that was tucked away under clothing"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        settings = getattr(context.scene, "aat", None)
+        if settings is None or settings.cloth_body_mesh == "NONE":
+            return False
+        body = bpy.data.objects.get(settings.cloth_body_mesh)
+        return body is not None and _HIDE_MODIFIER in body.modifiers
+
+    def execute(self, context: Context):
+        settings = context.scene.aat
+        body = bpy.data.objects.get(settings.cloth_body_mesh)
+        if body is None:
+            self.report({'ERROR'}, "Body mesh not found")
+            return {'CANCELLED'}
+        modifier = body.modifiers.get(_HIDE_MODIFIER)
+        if modifier is not None:
+            body.modifiers.remove(modifier)
+        group = body.vertex_groups.get(_HIDE_GROUP)
+        if group is not None:
+            body.vertex_groups.remove(group)
+        self.report({'INFO'}, "The whole body is visible again")
+        return {'FINISHED'}
+
+
+_CLASSES = (
+    AAT_OT_fit_clothing,
+    AAT_OT_hide_body_under_clothing,
+    AAT_OT_show_body_under_clothing,
+)
 
 
 def register() -> None:
